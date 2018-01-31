@@ -11,8 +11,10 @@ add_definitions(-Dcmake_MAJOR=${PROJECT_VERSION_MAJOR} -Dcmake_MINOR=${PROJECT_V
 include("default_buildinstall.cmake")
 
 foreach(loopvar IN LISTS libs)
+  message("entering ${loopvar}")
   add_subdirectory(${loopvar} ${CMAKE_CURRENT_BINARY_DIR}/${loopvar})
   message("${CMAKE_INCLUDE_PATH}")
+  message("leaving ${loopvar}")
 endforeach(loopvar)
 
 install(FILES LICENSE DESTINATION /usr/local/share/${progname} PERMISSIONS WORLD_READ)
