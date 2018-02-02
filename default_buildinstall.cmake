@@ -1,7 +1,8 @@
 # -*- mode: cmake; eval: (hl-line-mode 0);-*-
-function(build_and_install sources type linklibs properties install)
+function(build_and_install sources_l type linklibs properties install)
   string(REPLACE "${CMAKE_SOURCE_DIR}/" "" progname_tmp ${CMAKE_CURRENT_SOURCE_DIR})
   string(REPLACE "/" "_" progname ${progname_tmp})
+  string(REPLACE " " ";" sources ${sources_l})
 
   if(${type} STREQUAL "PROGRAM")
     message("adding program \"${progname}\"")
@@ -21,6 +22,11 @@ function(build_and_install sources type linklibs properties install)
     find_library(libloc ${loopvar})
     target_link_libraries(${progname} ${libloc})
   endforeach(loopvar)
+
+  message("${INCLUDE_DIRECTORIES}")
+  message("${SYSTEM_INCLUDE_DIRECTORIES}")
+  message("${CMAKE_INCLUDE_DIRECTORIES}")
+  
 
   if(${install} MATCHES "NO.*")
     message("Target \"${progname}\" won't install anything")

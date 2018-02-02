@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(int VERSION 1.0 LANGUAGES CXX)
 
-set(libs interpolation)
+set(libs resolv)
 add_compile_options(-pipe -O2 -Wall -g)
 
 set(progname ${PROJECT_NAME})
@@ -13,7 +13,9 @@ include("default_buildinstall.cmake")
 foreach(loopvar IN LISTS libs)
   message("entering ${loopvar}")
   add_subdirectory(${loopvar} ${CMAKE_CURRENT_BINARY_DIR}/${loopvar})
-  message("${CMAKE_INCLUDE_PATH}")
+  message("${INCLUDE_DIRECTORIES}")
+  message("${SYSTEM_INCLUDE_DIRECTORIES}")
+  message("${CMAKE_INCLUDE_DIRECTORIES}")
   message("leaving ${loopvar}")
 endforeach(loopvar)
 
