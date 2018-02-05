@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(int VERSION 1.0 LANGUAGES CXX)
 
-set(libs resolv)
+set(libs differential resolv)
 add_compile_options(-pipe -O2 -Wall -g)
 
 set(progname ${PROJECT_NAME})
