@@ -8,7 +8,7 @@ public:
 	Differential(unsigned short order);
 	double nodes(unsigned short index);
 	double quadratureWeights(unsigned short index);
-	double differentiationWeights(unsigned short index);
+	double differentiationWeights(unsigned short index, unsigned short point);
 private:
 	unsigned short order;
 	double *nodesx;
