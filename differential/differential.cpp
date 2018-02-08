@@ -7,8 +7,10 @@ const double pi=3.14159265358979323846264338327950288419716939937510;
 Differential::Differential(unsigned short order_p)
 {
   order=order_p;
-	nodesx=new double(order);
-	qw=new double(order);
+  gsl_integration_fixed_workspace *iws=gsl_integration_fixed_alloc(gsl_integration_fixed_legendre, n, 0,1,0,0);
+  nodesx=gsl_integration_fixed_nodes(iws);
+  qw=gsl_integration_fixed_weights(iws);
+  gsl_integration_fixed_free(iws);
 	dw=new double(order*order);
 	double difftmp[order*order];
 	double prods[order];
