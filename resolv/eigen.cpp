@@ -7,6 +7,9 @@
 #include "interpolation.h"
 #include "../differential/differential.h"
 
+#define HAVE_INLINE
+#define GSL_RANGE_CHECK_OFF
+
 using namespace interpolation;
 
 namespace eigen {
@@ -39,7 +42,7 @@ namespace eigen {
 		//todo: A sparse?
 		//todo2: A already triangular!
 		A=gsl_matrix_calloc(dim,dim);
-		F=gsl_matrix_calloc(dim,dim);
+		F=gsl_matrix_alloc(dim,dim);
 		
         for(int i=0;i<size-1; i++)
 	        for(int l=0;l<order;l++){
@@ -47,11 +50,11 @@ namespace eigen {
 				double invd=1./delta;
 		        for(int m=0;m<order;m++)
 					gsl_matrix_set(A,i*order+l,i*order+m,get->differentiationWeights(l,m)*invd);
-				gsl_matrix_set(A,i*order+l,i*order+l,-gamma(curnode)-mu(curnode));
-		        auto dasi=delta*interpolation::S0(curnode);
+				(*gsl_matrix_ptr(A,i*order+l,i*order+l))-=gamma(curnode)+mu(curnode);
+		        auto dasi=delta*S0(curnode);
 		        for(int j=0; j<size; j++)
 			        for(int m=0;m<order;m++)
-				        gsl_matrix_set(F,i*order+l,j*order+m,dasi*interpolation::beta(curnode,start+delta*(j+get->nodes(m)))*get->quadratureWeights(m));
+				        gsl_matrix_set(F,i*order+l,j*order+m,dasi*beta(curnode,start+delta*(j+get->nodes(m)))*get->quadratureWeights(m));
 	        }
         beta=gsl_vector_alloc(dim);
         alpha=gsl_vector_complex_alloc(dim);
