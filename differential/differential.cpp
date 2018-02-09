@@ -18,7 +18,7 @@ Differential::Differential(unsigned short order_p)
 	for(int i=0;i<order;i++){
 		prods[i]=1;
 		dw[i*order+i]=0;
-		// store differences in the lower triagular part
+		// store differences in the lower triagular part; todo: only alloc lower triangular
 		for(int j=0;j<i;j++){
 			difftmp[i*order+j]=nodesx[i]-nodesx[j];
 			prods[i]*=difftmp[i*order+j];

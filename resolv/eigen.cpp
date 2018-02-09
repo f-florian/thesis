@@ -46,13 +46,14 @@ namespace eigen {
 		        // node : coordinate of m-th node in static submesh   
 		        auto curnode=start+delta*(i+get->nodes(l));
 		        // change invd with weigths for FD folmulas
-		        gsl_matrix_set(A,i,i,-invd-gamma(curnode)-mu(curnode));
-		        gsl_matrix_set(A,i+1,i,invd);
+		        for(int m=0;m<order;m++)
+					gsl_matrix_set(A,i*order+l,i*order+m,get->differentiationWeights(l,m)*scale);
+				gsl_matrix_set(A,i*order+l,i*order+l,-gamma(curnode)-mu(curnode));
 		        auto dasi=delta*S0(curnode);
 		        for(int j=0; j<size; j++)
 			        for(int m=0;m<order;m++){
 				        //weightfq quadratura; remember to scale (ie: is dasi ok? do it in Differential?)
-				        gsl_matrix_set(F,i,j*order+m,dasi*interpolation::beta(curnode,start+delta*j)*get->quadratureWeights(m));
+				        gsl_matrix_set(F,i*order+l,j*order+m,dasi*interpolation::beta(curnode,start+delta*j)*get->quadratureWeights(m));
 			        }
 	        }
         beta=gsl_vector_alloc(dim);
