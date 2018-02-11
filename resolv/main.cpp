@@ -4,9 +4,9 @@
 #include <gsl/gsl_vector.h>
 #include "eigen.h"
 #include "interpolation.h"
+#include "../differential/differential.h"
 
-
-const unsigned short ni=4;
+constexpr unsigned short ni=4;
 const int sizes=21;
 const int sizemu=113;
 // const int sizemu=116;
@@ -19,6 +19,16 @@ const double mu[sizemu]={0.06764,0.00038,0.00024,0.00019,0.00013,0.00010,0.00010
 
 int main()
 {
+	Differential d(ni);
+
+	for(int i=0;i<ni;i++){
+		double sum=0;
+		for(int j=0;j<ni;j++)
+			sum+=d.nodes(j)*d.nodes(j)*d.nodes(j)*d.differentiationWeights(j,i);
+        printf("computing der. of x in %lf: %lf\n", d.nodes(i), sum);
+	}
+	return 0;
+
 	double xm[sizemu];
 	double xs[sizes];
 	

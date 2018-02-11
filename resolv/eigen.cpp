@@ -49,12 +49,12 @@ namespace eigen {
 		        auto curnode=start+delta*(i+get->nodes(l));
 				double invd=1./delta;
 		        for(int m=0;m<order;m++)
-					gsl_matrix_set(A,i*order+l,i*order+m,get->differentiationWeights(l,m)*invd);
+			        gsl_matrix_set(A,i*order+l,i*order+m,get->differentiationWeights(m,l)*invd);
 				(*gsl_matrix_ptr(A,i*order+l,i*order+l))-=gamma(curnode)+mu(curnode);
 		        auto dasi=delta*S0(curnode);
 		        for(int j=0; j<size; j++)
 			        for(int m=0;m<order;m++)
-				        gsl_matrix_set(F,i*order+l,j*order+m,dasi*beta(curnode,start+delta*(j+get->nodes(m)))*get->quadratureWeights(m));
+				        gsl_matrix_set(F,i*order+l,j*order+m,dasi*interpolation::beta(curnode,start+delta*(j+get->nodes(m)))*get->quadratureWeights(m));
 	        }
         beta=gsl_vector_alloc(dim);
         alpha=gsl_vector_complex_alloc(dim);
