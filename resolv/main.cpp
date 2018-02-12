@@ -39,14 +39,15 @@ int main()
 	
 	eigen::setOrder(ni);
 	interpolation::splineInit(sizes, sizemu, xm, mu, xs, s);
-	for(int i=25; i<=250;i+=25){
-    // int i=10000;
+	
+	for(int i=3; i<=3;i++){
+	// for(int i=100/ni; i<=1000/ni;i+=100/ni){
 		printf("start %d\n", i);
 		fflush(stdout);
 		eigen::init(i+1, 0, 100./i, ni);
         // printf("init %d\n", i);
         // fflush(stdout);
-        printf("%d: %lf\n", i, eigen::computeSpectralRadius());
+        printf("%d: %.10le\n", i, eigen::computeSpectralRadius());
         // fflush(stdout);
         // if(i<100)
 	    //     i+=10;
