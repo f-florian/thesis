@@ -19,15 +19,15 @@ const double mu[sizemu]={0.06764,0.00038,0.00024,0.00019,0.00013,0.00010,0.00010
 
 int main()
 {
-	Differential d(ni);
+	// Differential d(ni);
 
-	for(int i=0;i<ni;i++){
-		double sum=0;
-		for(int j=0;j<ni;j++)
-			sum+=d.nodes(j)*d.nodes(j)*d.nodes(j)*d.differentiationWeights(j,i);
-        printf("computing der. of x in %lf: %lf\n", d.nodes(i), sum);
-	}
-	return 0;
+	// for(int i=0;i<ni;i++){
+	// 	double sum=0;
+	// 	for(int j=0;j<ni;j++)
+	// 		sum+=d.nodes(j)*d.nodes(j)*d.nodes(j)*d.differentiationWeights(j,i);
+    //     printf("computing der. of x in %lf: %lf\n", d.nodes(i), sum);
+	// }
+	// return 0;
 
 	double xm[sizemu];
 	double xs[sizes];
@@ -39,7 +39,7 @@ int main()
 	
 	eigen::setOrder(ni);
 	interpolation::splineInit(sizes, sizemu, xm, mu, xs, s);
-	for(int i=10; i<=1000;){
+	for(int i=25; i<=250;i+=25){
     // int i=10000;
 		printf("start %d\n", i);
 		fflush(stdout);
@@ -48,10 +48,10 @@ int main()
         // fflush(stdout);
         printf("%d: %lf\n", i, eigen::computeSpectralRadius());
         // fflush(stdout);
-        if(i<100)
-	        i+=10;
-        else
-	        i+=100;
+        // if(i<100)
+	    //     i+=10;
+        // else
+	    //     i+=100;
     }
     eigen::freemem();
 }
