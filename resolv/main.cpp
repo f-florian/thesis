@@ -6,7 +6,7 @@
 #include "interpolation.h"
 #include "../differential/differential.h"
 
-constexpr unsigned short ni=4;
+constexpr unsigned short ni=10;
 const int sizes=21;
 const int sizemu=113;
 // const int sizemu=116;
