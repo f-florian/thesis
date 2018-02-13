@@ -21,23 +21,23 @@ namespace interpolation
     double S0(double x)
     {
         if((100.-x)<0.00001){
-	        printf("anoeinaos\n");
+	        printf("anoeinaos %le\n",x);
 	        return 65;
         }
-        printf("S interpolation in %le", x);
-        fflush(stdout);
+        // printf("S interpolation in %le", x);
+        // fflush(stdout);
         auto tmp=gsl_spline_eval(splineS0,x,accels);
-        printf(" (%le)\n", tmp);
-        fflush(stdout);
+        // printf(" (%le)\n", tmp);
+        // fflush(stdout);
         return tmp;
     }
     double mu(double x)
     {
-        printf("mu interpolation in %le", x);
-        fflush(stdout);
+        // printf("mu interpolation in %le", x);
+        // fflush(stdout);
         auto tmp=gsl_spline_eval(splinemu,x,accelm);
-        printf(" (%le)\n", tmp);
-        fflush(stdout);
+        // printf(" (%le)\n", tmp);
+        // fflush(stdout);
         return tmp;
     }
     void splineInit(int sizes, int sizem, const double mx[], const double my[], const double sx[], const double sy[])
