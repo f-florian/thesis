@@ -43,8 +43,7 @@ int main()
 	// for(int i=3; i<=3;i++){
 	for(int i=100/ni; i<=1000/ni;i+=100/ni){
 		printf("start %d\n", i);
-		fflush(stdout);
-		eigen::init(i+1, 0, 100./i, ni);
+		eigen::init(i, 0, 100./i, ni);
         // printf("init %d\n", i);
         // fflush(stdout);
         printf("%d: %.10le\n", i, eigen::computeSpectralRadius());

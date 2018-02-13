@@ -50,6 +50,7 @@ namespace eigen {
 		for(int i=0;i<size; i++)
 			for(int l=0;l<order;l++){
 				auto curnode=start+delta*(i+get->nodes(l));
+				// printf("node %le\n", curnode);
 				for(int m=0;m<order;m++)
 					gsl_matrix_set(A,i*order+l,i*order+m,get->differentiationWeights(m,l)*invd);
 				(*gsl_matrix_ptr(A,i*order+l,i*order+l))-=gamma(curnode)+mu(curnode);
