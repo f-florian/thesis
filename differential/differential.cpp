@@ -9,11 +9,15 @@ const double pi=3.14159265358979323846264338327950288419716939937510;
 Differential::Differential(unsigned short order_p)
 {
 	order=order_p;
+	dw=new double[order*order];
+	// qw=new double[order];
+	// nodesx=new double[order];
 	gsl_integration_fixed_workspace *iws=gsl_integration_fixed_alloc(gsl_integration_fixed_legendre, order, 0,1,0,0);
 	nodesx=gsl_integration_fixed_nodes(iws);
 	qw=gsl_integration_fixed_weights(iws);
-	gsl_integration_fixed_free(iws);
-	dw=new double[order*order];
+	// gsl_integration_fixed_free(iws);
+	for(int i=0;i<order;i++)
+		printf("%d %le %le\n",i, nodesx[i], qw[i]);
 	double difftmp[order*order];
 	double prods[order];
 	for(int i=0;i<order;i++){
@@ -39,23 +43,27 @@ Differential::Differential(unsigned short order_p)
 			// printf("set (%d,%d) (=%d,%d) to %lf (and %lf)\n",i,j,i*order+j, j*order+i,dw[i*order+j],dw[j*order+i]);
 		}
 	//check precomputed derivatives (manual)
-	for(int i=0;i<order;i++)
-		printf("prod[%d]=%lf\n",i,prods[i]);
-	for(int i=0;i<order;i++)
-		printf("nodes[%d]=%lf\n",i,nodesx[i]);
-	for(int i=0;i<order*order;i++)
-		printf("dw[%d]=%lf\n",i, dw[i]);
+	// for(int i=0;i<order;i++)
+	// 	printf("prod[%d]=%lf\n",i,prods[i]);
+	// for(int i=0;i<order;i++)
+	// 	printf("nodes[%d]=%lf\n",i,nodesx[i]);
+	// for(int i=0;i<order*order;i++)
+	// 	printf("dw[%d]=%lf\n",i, dw[i]);
+	// for(int i=0;i<order;i++)
+		// printf("%d %le %le\n",i, nodes(i), quadratureWeights(i));
 }
 double Differential::nodes(unsigned short index)
 {
 	if(index>=order)
 		throw(std::range_error("requested point not a valid mesh index"));
+	// printf("requested node %d: %le\n",index, nodesx[index]);
 	return nodesx[index];
 }
 double Differential::quadratureWeights(unsigned short index)
 {
 	if(index>=order)
 		throw(std::range_error("requested point not a valid mesh index"));
+	// printf("requested weight %d: %le\n",index, qw[index]);
 	return qw[index];
 }
 double Differential::differentiationWeights(unsigned short polynomial, unsigned short point)

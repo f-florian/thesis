@@ -13,11 +13,11 @@
 using namespace interpolation;
 
 namespace eigen {
+	Differential* get;
 	namespace {
 		gsl_matrix *A,*F;
 		gsl_vector_complex * alpha;
 		gsl_vector * beta;
-		Differential* get;
 	}
 	void freemem()
 	{
@@ -56,7 +56,7 @@ namespace eigen {
 				auto dasi=delta*S0(curnode);
 				for(int j=0; j<size; j++)
 					for(int m=0;m<order;m++){
-						printf("F idx:%d, node:%lf, weight:%lf\n", j*order+m, get->nodes(m), get->quadratureWeights(m));
+						// printf("F idx:%d, node:%lf, weight:%lf\n", j*order+m, get->nodes(m), get->quadratureWeights(m));
 						gsl_matrix_set(F,i*order+l,j*order+m,dasi*interpolation::beta(curnode,start+delta*(j+get->nodes(m)))*get->quadratureWeights(m));
 					}
 			}

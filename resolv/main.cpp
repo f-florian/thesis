@@ -40,8 +40,8 @@ int main()
 	eigen::setOrder(ni);
 	interpolation::splineInit(sizes, sizemu, xm, mu, xs, s);
 	
-	for(int i=3; i<=3;i++){
-	// for(int i=100/ni; i<=1000/ni;i+=100/ni){
+	// for(int i=3; i<=3;i++){
+	for(int i=100/ni; i<=1000/ni;i+=100/ni){
 		printf("start %d\n", i);
 		fflush(stdout);
 		eigen::init(i+1, 0, 100./i, ni);
