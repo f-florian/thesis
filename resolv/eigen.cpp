@@ -7,6 +7,8 @@
 #include "interpolation.h"
 #include "../differential/differential.h"
 
+#include <cstdlib>
+
 #define HAVE_INLINE
 #define GSL_RANGE_CHECK_OFF
 
@@ -61,7 +63,6 @@ namespace eigen {
 						gsl_matrix_set(F,i*order+l,j*order+m,dasi*interpolation::beta(curnode,start+delta*(j+get->nodes(m)))*get->quadratureWeights(m));
 					}
 			}
-
 		// for(int i=0;i<dim;i++){
 		// 	for(int j=0;j<dim;j++)
 		// 		printf("%9.2le ",gsl_matrix_get(F,i,j));
@@ -83,6 +84,7 @@ namespace eigen {
 			// fflush(stdout);
 		}
 		gsl_eigen_gen_free(ws);
+		fflush(stdout);
 
 		// // standard eigenvalue problem
 		// gsl_blas_dtrsm(CblasRight,  CblasLower,  CblasNoTrans, CblasNonUnit, 1, A, F);

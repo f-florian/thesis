@@ -6,7 +6,7 @@
 #include "interpolation.h"
 #include "../differential/differential.h"
 
-constexpr unsigned short ni=10;
+constexpr unsigned short ni=5;
 const int sizes=21;
 const int sizemu=113;
 // const int sizemu=116;
@@ -41,17 +41,14 @@ int main()
 	interpolation::splineInit(sizes, sizemu, xm, mu, xs, s);
 	
 	// for(int i=3; i<=3;i++){
-	for(int i=100/ni; i<=1000/ni;i+=100/ni){
-		printf("start %d\n", i);
+	for(int i=30/ni; i<=1000/ni;){
 		eigen::init(i, 0, 100./i, ni);
-        // printf("init %d\n", i);
-        // fflush(stdout);
-        printf("%d: %.10le\n", i, eigen::computeSpectralRadius());
-        // fflush(stdout);
-        // if(i<100)
-	    //     i+=10;
-        // else
-	    //     i+=100;
+        printf("%4d %.10le\n", i, eigen::computeSpectralRadius());
+        fflush(stdout);
+        if(i<100/ni)
+	        i+=10/ni;
+        else
+	        i+=100/ni;
     }
     eigen::freemem();
 }
