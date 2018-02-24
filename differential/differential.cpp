@@ -10,9 +10,11 @@ Differential::Differential(unsigned short order_p)
 	order=order_p;
 	dw=new double[order*order];
 	gsl_integration_fixed_workspace *iws=gsl_integration_fixed_alloc(gsl_integration_fixed_legendre, order, 0,1,0,0);
-	nodesx=gsl_integration_fixed_nodes(iws);
-	qw=gsl_integration_fixed_weights(iws);
-	// gsl_integration_fixed_free(iws);
+	nodesx=iws->x;
+	iws->x=NULL;
+	qw=iws->weights;
+	iws->weights=NULL;
+	gsl_integration_fixed_free(iws);
 	for(int i=0;i<order;i++)
 		printf("%d %le %le\n",i, nodesx[i], qw[i]);
 	double difftmp[order*order];
