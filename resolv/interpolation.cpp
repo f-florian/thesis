@@ -12,35 +12,29 @@ namespace interpolation
         gsl_spline *splineS0;
     }
     const double k=3e-5;
-    double beta(double x1, double x2){
-	    return k*(6e-7*(10000-(x1-x2)*(x1-x2))+0.001);
+    double beta(const double x1, const double x2){
+        return k*(6e-7*(10000-(x1-x2)*(x1-x2))+0.001);
     }
-    double gamma(double x){
+    double gamma(const double x){
         return 52;
     }
-    double S0(double x)
+    double S0(const double x)
     {
-        if((100.-x)<0.00001){
-	        printf("anoeinaos %le\n",x);
-	        return 65;
+        if(x>100){
+            printf("Requested interpolation in %.2e, which is %.2e beyond the maximum value\n",x,x-100);
+            return gsl_spline_eval(splineS0,100,accels);;
         }
-        // printf("S interpolation in %le", x);
-        // fflush(stdout);
-        auto tmp=gsl_spline_eval(splineS0,x,accels);
-        // printf(" (%le)\n", tmp);
-        // fflush(stdout);
-        return tmp;
+        return gsl_spline_eval(splineS0,x,accels);
     }
-    double mu(double x)
+    double mu(const double x)
     {
-        // printf("mu interpolation in %le", x);
-        // fflush(stdout);
-        auto tmp=gsl_spline_eval(splinemu,x,accelm);
-        // printf(" (%le)\n", tmp);
-        // fflush(stdout);
-        return tmp;
+        if(x>100){
+            printf("Requested interpolation in %.2e, which is %.2e beyond the maximum value\n",x,x-100);
+            return gsl_spline_eval(splinemu,100,accelm);;
+        }
+        return gsl_spline_eval(splinemu,x,accelm);
     }
-    void splineInit(int sizes, int sizem, const double mx[], const double my[], const double sx[], const double sy[])
+    void splineInit(const int sizes, const int sizem, const double mx[], const double my[], const double sx[], const double sy[])
     {
 	if(accels!=NULL)
 	    gsl_interp_accel_free(accels);
