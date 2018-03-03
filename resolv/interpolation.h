@@ -4,11 +4,11 @@
 
 namespace interpolation
 {
-    void splineInit(int size, int sizem, const double mx[], const double my[], const double sx[], const double sy[]);
-    double mu(double x);
-    double gamma(double x);
-    double beta(double x1, double x2);
-    double S0(double x);
+    void splineInit(const int size, const int sizem, const double mx[], const double my[], const double sx[], const double sy[]);
+    double mu(const double x);
+    double gamma(const double x);
+    double beta(const double x1, const double x2);
+    double S0(const double x);
 }
 
 #endif // INTERPOLATION_H

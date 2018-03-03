@@ -16,7 +16,6 @@ using namespace interpolation;
 
 namespace eigen {
     namespace {
-        Differential* get;
         gsl_matrix *A,*F;
     }
     void freemem()
@@ -37,7 +36,7 @@ namespace eigen {
         //todo: A sparse?
         //todo2: A already triangular!
         for(int i=0;i<size; i++){
-            auto curnode=start+delta*i;
+            auto curnode=start+delta*(i+1);
             gsl_matrix_set(A,i,i,-invd-gamma(curnode)-mu(curnode));
             auto dasi=delta*S0(curnode);
             for(int j=0; j<size; j++){
