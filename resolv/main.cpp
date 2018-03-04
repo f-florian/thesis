@@ -6,7 +6,7 @@
 #include "interpolation.h"
 #include "../differential/differential.h"
 
-unsigned short ni=5;
+unsigned int ni=5;
 constexpr int sizes=21;
 constexpr int sizemuv[3]={113,116,23};
 
@@ -24,7 +24,7 @@ constexpr int step=20;
 
 int main(int argc, char**argv)
 {
-    double xm[sizemu];
+    double *xm;
     double xs[sizes];
     for(int i=0;i<sizes;i++)
         xs[i]=5*i;
@@ -41,16 +41,19 @@ int main(int argc, char**argv)
         case 0:
             mu=mu0;
             sizemu=sizemuv[0];
+            xm=new double[sizemu];
             for(int i=0;i<sizemu;i++)
                 xm[i]=i;
             break;
         case 1:
             mu=mu1;
             sizemu=sizemuv[1];
+            xm=new double[sizemu];
             for(int i=0;i<sizemu;i++)
                 xm[i]=i;
             break;
         case 2:
+            xm=new double[sizemu];
             for(int i=0;i<sizemu;i++)
                 xm[i]=5*i;
             break;
@@ -67,6 +70,7 @@ int main(int argc, char**argv)
     eigen::setOrder(ni);
     interpolation::splineInit(sizes, sizemu, xm, mu, xs, s);
 
+    
     for(int i=start*ni; i<=maxsize;i+=step*ni){
         // size,start,delta,order
         eigen::init(i/ni, 0, ni*100./i, ni);
