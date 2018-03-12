@@ -1,4 +1,5 @@
 #include <gsl/gsl_vector.h>
+#include <gsl/gsl_matrix.h>
 #include <gsl/gsl_eigen.h>
 #include <gsl/gsl_complex_math.h>
 // #include <gsl/gsl_blas.h>
@@ -25,27 +26,22 @@ namespace eigen {
         if(F!=NULL)
             gsl_matrix_free(F);
     }
-    void init(const unsigned int size, double start, double delta)
+    void init(const unsigned int size, double start, double end)
     {
+        Differential d(size);
         freemem();
-        auto invd=1/delta;
         // allocation
-        A=gsl_matrix_calloc(size,size);
+        A=gsl_matrix_alloc(size,size);
         F=gsl_matrix_alloc(size,size);
-		
-        //todo: A sparse?
-        //todo2: A already triangular!
         for(int i=0;i<size; i++){
-            auto curnode=start+delta*(i+1);
-            gsl_matrix_set(A,i,i,-invd-gamma(curnode)-mu(curnode));
-            auto dasi=delta*S0(curnode);
+            auto curnode=d.nodes(i,end,start);
+            auto dasi=S0(curnode);
             for(int j=0; j<size; j++){
-                // printf("F idx:%d, node:%lf, weight:%lf\n", j*order+m, get->nodes(m), get->quadratureWeights(m));
-                gsl_matrix_set(F,i,j,dasi*interpolation::beta(curnode,start+delta*j));
+                gsl_matrix_set(A,i,j,d.differentiationWeights(i,j,end,start));
+                gsl_matrix_set(F,i,j,dasi*interpolation::beta(curnode,d.nodes(j,end,start))*d.quadratureWeights(j,end,start));
             }
+            (*gsl_matrix_ptr(A,i,i))-=gamma(curnode)+mu(curnode);
         }
-        for(int i=1;i<size; i++)
-            gsl_matrix_set(A,i,i-1,invd);
     }
     double computeSpectralRadius()
     {

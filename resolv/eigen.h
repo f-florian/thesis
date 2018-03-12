@@ -6,9 +6,8 @@
 namespace eigen
 {
     double computeSpectralRadius();
-	void init(const unsigned int size, double start, double delta, unsigned short order);
+    void init(const unsigned int size, double start, double end);
     void freemem();
-	void setOrder(unsigned short ni);
 }
 
 #endif // EIGEN_H

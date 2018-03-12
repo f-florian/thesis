@@ -66,8 +66,8 @@ int main(int argc, char**argv)
     interpolation::splineInit(sizes, sizemu, xm, mu, xs, s);
     
     for(int i=2; i<=maxsize;i++){
-        // size,start,delta,order
-        eigen::init(i, 0, 100./i);
+        // size,start,end
+        eigen::init(i, 0, 100);
         printf("%4d %.20e\n", i, eigen::computeSpectralRadius());
     }
     eigen::freemem();
