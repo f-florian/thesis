@@ -3,7 +3,7 @@
 #include <gsl/gsl_integration.h>
 #include "differential.h"
 
-const double pi=3.14159265358979323846264338327950288419716939937510;
+constexpr double pi=3.14159265358979323846264338327950288419716939937510;
 
 Differential::Differential(unsigned short order_p)
 {
@@ -24,7 +24,7 @@ Differential::Differential(unsigned short order_p)
 #endif // ___DEBUG_PRINT
     // store temporary values to accelerate computation:
     double difftmp[order*order];
-    double prods[order];
+    double prods[order];                //weights for the barycentric lagrange interpolation
     for(int i=0;i<order;i++){
         prods[i]=1;
         dw[i*order+i]=0;
@@ -35,9 +35,6 @@ Differential::Differential(unsigned short order_p)
             // prods_i=\sum_k 1/(x_i-x_k)
             prods[i]*=difftmp[i*order+j];
             prods[j]*=-difftmp[i*order+j];
-            // l_j'(x_j)=\sum_{k!=j} 1/(x_j-x_k)
-            dw[i*order+i]+=1/difftmp[i*order+j];
-            dw[j*order+j]-=1/difftmp[i*order+j];
         }
     }
 #ifdef ___DEBUG_PRINT
@@ -54,6 +51,14 @@ Differential::Differential(unsigned short order_p)
             printf("set (%d,%d) (=%d,%d) to %lf (and %lf)\n",i,j,i*order+j, j*order+i,dw[i*order+j],dw[j*order+i]);
 #endif // ___DEBUG_PRINT
         }
+    for (int i = 0; i < order; ++i) {
+        dw[i*order+i]=0;
+        for (int j = 0; j<i; ++j) {
+            dw[i*order+i]-=dw[j*order+i];
+            dw[j*order+j]-=dw[i*order+j];
+        }
+    }
+
 
 #ifdef ___DEBUG_PRINT
     for(int i=0;i<order;i++)
