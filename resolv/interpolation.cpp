@@ -34,7 +34,7 @@ namespace interpolation
         }
         return gsl_spline_eval(splinemu,x,accelm);
     }
-    void splineInit(const int sizes, const int sizem, const double mx[], const double my[], const double sx[], const double sy[])
+    void splineInit(const int sizes, const int sizem, const double *mx, const double *my, const double sx[], const double sy[])
     {
 	if(accels!=NULL)
 	    gsl_interp_accel_free(accels);
