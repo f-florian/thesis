@@ -6,7 +6,7 @@
 
 #include "eigen.h"
 #include "interpolation.h"
-#include "../differential/differential.h"
+#include "differential.h"
 
 #include <cstdlib>
 

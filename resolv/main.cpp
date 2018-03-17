@@ -4,7 +4,7 @@
 #include <gsl/gsl_vector.h>
 #include "eigen.h"
 #include "interpolation.h"
-#include "../differential/differential.h"
+#include "differential.h"
 
 constexpr int sizes=21;
 constexpr int sizemuv[2]={113,116};

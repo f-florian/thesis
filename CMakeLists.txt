@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(int VERSION 1.0 LANGUAGES CXX)
 
-set(libs differential resolv)
+set(libs resolv)
 add_compile_options(-pipe -Wall --std=gnu++17 -Og -ggdb)
 
 set(progname ${PROJECT_NAME})
