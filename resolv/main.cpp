@@ -22,6 +22,7 @@ double *xm;
 
 constexpr int start=20;
 constexpr int step=20;
+Differential::Type inttype=Differential::Type::ClenshawCurtis;
 
 int main(int argc, char**argv)
 {
@@ -31,6 +32,17 @@ int main(int argc, char**argv)
     switch (argc-1){
     default:
         fprintf(stderr,"Ignoring arguments beyond the second (%d supplied)\n",argc);
+    case 3:
+        switch(atoi(argv[3])){
+        case 0:
+            inttype=Differential::Type::Gauss;
+            break;
+        case 1:
+            inttype=Differential::Type::ClenshawCurtis;
+            break;
+        default:
+            fprintf(stderr,"Invalid integration type specified, using default 'Clenshaw-Curtis (1)'");
+        }
     case 2:
         maxsize=atoi(argv[2]);
         if(maxsize==0)
@@ -62,7 +74,7 @@ int main(int argc, char**argv)
     
     for(int i=2; i<=maxsize;i++){
         // size,start,end
-        eigen::init(i, 0, 100);
+        eigen::init(i, 0, 100, inttype);
         printf("%4d %.20e\n", i, eigen::computeSpectralRadius());
     }
     eigen::freemem();

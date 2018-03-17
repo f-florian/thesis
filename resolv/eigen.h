@@ -2,11 +2,12 @@
 #define EIGEN_H
 
 #include <gsl/gsl_matrix.h>
+#include "differential.h"
 
 namespace eigen
 {
     double computeSpectralRadius();
-    void init(const unsigned int size, double start, double end);
+    void init(const unsigned int size, double start, double end, Differential::Type type);
     void freemem();
 }
 
