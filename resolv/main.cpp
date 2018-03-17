@@ -41,21 +41,22 @@ int main(int argc, char**argv)
         ;
     }
 
-    if(mustep>0){
-        sizemu=sizemuv[0]/mustep+1;
+    if (mustep<=0||mustep==5) {
+        xm=new double[sizemu];
+        for(int i=0;i<sizemu;i++)
+            xm[i]=5*i;
+    } else {
+        sizemu=100/mustep+1;
         mu=new double[sizemu];
         xm=new double[sizemu];
-        for(int i=0; i<sizemu;i++){
-            xm[i]=i*mustep;
-            if(i*mustep<sizemuv[0])
-                mu[i]=mu0[i*mustep];
-            else 
-                mu[i]=mu0[sizemuv[0]-1];
+        for (int i = 0; i < sizemu; ++i) {
+            xm[i]=mustep*i;
+            if(xm[i]>=sizemuv[0]){
+                fprintf(stderr,"warning: reducing requested age (%d) for computing mu to maximum available\n", xm[i]);
+                xm[i]=sizemuv[0]-1;
+            }
+            mu[i]=mu0[int(xm[i])];
         }
-    } else {
-        xm=new double[sizemu];
-        for(int i=0; i<sizemu;i++)
-            xm[i]=i;
     }
     interpolation::splineInit(sizes, sizemu, xm, mu, xs, s);
     

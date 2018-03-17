@@ -28,7 +28,7 @@ namespace eigen {
     }
     void init(const unsigned int size, double start, double end)
     {
-        Differential d(size);
+        Differential d(size, Differential::Type::Gauss);
         freemem();
         // allocation
         A=gsl_matrix_alloc(size,size);
