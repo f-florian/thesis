@@ -21,7 +21,11 @@ namespace interpolation
     double S0(const double x)
     {
         if(x>100){
-            printf("Requested interpolation in %.2e, which is %.2e beyond the maximum value\n",x,x-100);
+            fprintf(stderr,"Requested s interpolation in %.2e, which is %.2e beyond the maximum value\n",x,x-100);
+            return gsl_spline_eval(splineS0,100,accels);;
+        }
+        if(x<0){
+            fprintf(stderr,"Requested s interpolation in %.2e, which is %.2e below the minimum value\n",x,x);
             return gsl_spline_eval(splineS0,100,accels);;
         }
         return gsl_spline_eval(splineS0,x,accels);
@@ -29,8 +33,12 @@ namespace interpolation
     double mu(const double x)
     {
         if(x>100){
-            printf("Requested interpolation in %.2e, which is %.2e beyond the maximum value\n",x,x-100);
+            fprintf(stderr,"Requested interpolation in %.2e, which is %.2e beyond the maximum value\n",x,x-100);
             return gsl_spline_eval(splinemu,100,accelm);;
+        }
+        if(x<0){
+            fprintf(stderr,"Requested mu interpolation in %.2e, which is %.2e below the minimum value\n",x,x);
+            return gsl_spline_eval(splineS0,100,accels);
         }
         return gsl_spline_eval(splinemu,x,accelm);
     }
