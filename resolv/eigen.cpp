@@ -40,7 +40,7 @@ namespace eigen {
                 gsl_matrix_set(A,i,j,d.differentiationWeights(i,j,start,end));
                 gsl_matrix_set(F,i,j,dasi*interpolation::beta(curnode,d.nodes(j,start,end))*d.quadratureWeights(j,start,end));
             }
-            (*gsl_matrix_ptr(A,i,i))-=gamma(curnode)+mu(curnode);
+            (*gsl_matrix_ptr(A,i,i))+=gamma(curnode)+mu(curnode);
         }
     }
     double computeSpectralRadius()
