@@ -64,7 +64,7 @@ int main(int argc, char**argv)
         for (int i = 0; i < sizemu; ++i) {
             xm[i]=mustep*i;
             if(xm[i]>=sizemuv[0]){
-                fprintf(stderr,"warning: reducing requested age (%d) for computing mu to maximum available\n", xm[i]);
+                fprintf(stderr,"warning: reducing requested age (%e) for computing mu to maximum available\n", xm[i]);
                 xm[i]=sizemuv[0]-1;
             }
             mu[i]=mu0[int(xm[i])];
