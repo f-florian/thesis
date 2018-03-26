@@ -3,10 +3,11 @@
 
 #include <gsl/gsl_matrix.h>
 #include "differential.h"
+#include <utility>
 
 namespace eigen
 {
-    double computeSpectralRadius();
+    std::pair<double,double> computeSpectralRadius();
     void init(const unsigned int size, double start, double end, Differential::Type type);
     void freemem();
 }

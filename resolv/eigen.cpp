@@ -14,6 +14,7 @@
 #define GSL_RANGE_CHECK_OFF
 
 using namespace interpolation;
+using namespace std;
 
 namespace eigen {
     namespace {
@@ -43,9 +44,9 @@ namespace eigen {
             (*gsl_matrix_ptr(A,i,i))+=gamma(curnode)+mu(curnode);
         }
     }
-    double computeSpectralRadius()
+    pair<double,double> computeSpectralRadius()
     {
-        double a,radius=0;
+        double a,r1=0,r2=0;
         // general eigenvalue problem
         gsl_eigen_gen_workspace *ws=gsl_eigen_gen_alloc(A->size1);
         gsl_vector_complex * alpha=gsl_vector_complex_alloc(A->size1);
@@ -53,8 +54,12 @@ namespace eigen {
         gsl_eigen_gen(F,A,alpha,beta,ws);
         for(int i=0; i<A->size1; i++){
             a=gsl_complex_abs(gsl_vector_complex_get(alpha,i))/abs(gsl_vector_get(beta,i));
-            if(radius<a)
-                radius=a;
+            if(r1<a){
+                r2=r1;
+                r1=a;
+            } else if (r2<a) {
+                r2=a;
+            }
         }
         gsl_vector_free(beta);
         gsl_vector_complex_free(alpha);
@@ -70,6 +75,6 @@ namespace eigen {
         //         radius=a;
         // }
         // gsl_eigen_nonsymm_free(ws2);
-        return radius;
+        return make_pair(r1,r2);
     }
 }

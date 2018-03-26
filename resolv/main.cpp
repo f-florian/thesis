@@ -75,7 +75,8 @@ int main(int argc, char**argv)
     for(int i=2; i<=maxsize;i++){
         // size,start,end
         eigen::init(i, 0, 100, inttype);
-        printf("%4d %.20e\n", i, eigen::computeSpectralRadius());
+        auto a=eigen::computeSpectralRadius();
+        printf("%4d %.20e %.20e\n", i, a.first, a.second);
     }
     eigen::freemem();
 }
