@@ -72,11 +72,11 @@ int main(int argc, char**argv)
     }
     interpolation::splineInit(sizes, sizemu, xm, mu, xs, s);
     
-    for(int i=2; i<=maxsize;i++){
+    for(int i=200; i<=200;i++){
         // size,start,end
         eigen::init(i, 0, 100, inttype);
         auto a=eigen::computeSpectralRadius();
-        printf("%4d %.20e %.20e\n", i, a.first, a.second);
+        printf("%4d %.20e\n", i, a);
     }
     eigen::freemem();
 }

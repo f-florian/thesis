@@ -7,7 +7,7 @@
 
 namespace eigen
 {
-    std::pair<double,double> computeSpectralRadius();
+    double computeSpectralRadius();
     void init(const unsigned int size, double start, double end, Differential::Type type);
     void freemem();
 }
