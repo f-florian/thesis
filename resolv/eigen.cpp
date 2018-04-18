@@ -46,11 +46,11 @@ namespace eigen {
             }
             (*gsl_matrix_ptr(A,i,i))+=gamma(curnode)+mu(curnode);
         }
-        for(int i=0;i<size;i++){
-            for (int j=0; j<size; ++j)
-                printf("%.10e ", gsl_matrix_get(A,i,j));
-            printf(";\n");
-        }
+        // for(int i=0;i<size;i++){
+        //     for (int j=0; j<size; ++j)
+        //         printf("%.10e ", gsl_matrix_get(A,i,j));
+        //     printf(";\n");
+        // }
     }
     double computeSpectralRadius()
     {
