@@ -53,10 +53,10 @@ int main(int argc, char**argv)
         ;
     }
 
-    if (mustep<=0||mustep==5) {
+    if (mustep<=0||mustep==1) {
         xm=new double[sizemu];
         for(int i=0;i<sizemu;i++)
-            xm[i]=5*i;
+            xm[i]=i;
     } else {
         sizemu=100/mustep+1;
         mu=new double[sizemu];
