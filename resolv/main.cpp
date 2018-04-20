@@ -31,7 +31,8 @@ int main(int argc, char**argv)
 
     switch (argc-1){
     default:
-        fprintf(stderr,"Ignoring arguments beyond the second (%d supplied)\n",argc);
+        fprintf(stderr,"Ignoring arguments beyond the third (%d supplied)\n",argc);
+        [[fallthrough]];
     case 3:
         switch(atoi(argv[3])){
         case 0:
@@ -43,17 +44,20 @@ int main(int argc, char**argv)
         default:
             fprintf(stderr,"Invalid integration type specified, using default 'Clenshaw-Curtis (1)'");
         }
+        [[fallthrough]];
     case 2:
         maxsize=atoi(argv[2]);
         if(maxsize==0)
             fprintf(stderr,"You selected 0 as maximum size, no matrix radius will be computed\n");
+        [[fallthrough]];
     case 1:
         mustep=atoi(argv[1]);
+        [[fallthrough]];
     case 0:
         ;
     }
 
-    if (mustep<=0||mustep==1) {
+    if (mustep<=1) {
         xm=new double[sizemu];
         for(int i=0;i<sizemu;i++)
             xm[i]=i;
