@@ -83,4 +83,5 @@ int main(int argc, char**argv)
         printf("%4d %.20e\n", i, a);
     }
     eigen::freemem();
+    interpolation::free();
 }

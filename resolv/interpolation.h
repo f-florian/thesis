@@ -9,6 +9,7 @@ namespace interpolation
     double gamma(const double x);
     double beta(const double x1, const double x2);
     double S0(const double x);
+    void free();
 }
 
 #endif // INTERPOLATION_H
