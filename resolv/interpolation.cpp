@@ -6,6 +6,7 @@
 namespace interpolation
 {
     namespace {
+        bool analytic;
         gsl_interp_accel *accels;
         gsl_interp_accel *accelm;
         gsl_spline *splinemu;
@@ -20,7 +21,8 @@ namespace interpolation
     }
     double S0(const double x)
     {
-        // return 5187+ x*(226.438-2.776583333333333-x*2.776583333333333);
+        if (analytic)
+            return 5187+ x*(226.438-2.776583333333333-x*2.776583333333333);
         if(x>100){
             fprintf(stderr,"Requested s interpolation in %.2e, which is %.2e beyond the maximum value\n",x,x-100);
             return gsl_spline_eval(splineS0,100,accels);
@@ -33,7 +35,8 @@ namespace interpolation
     }
     double mu(const double x)
     {
-        // return 8.3675/(110-x);
+        if (analytic)
+            return 8.3675/(110-x);
         if(x>100){
             fprintf(stderr,"Requested interpolation in %.2e, which is %.2e beyond the maximum value\n",x,x-100);
             return gsl_spline_eval(splinemu,100,accelm);
@@ -44,8 +47,9 @@ namespace interpolation
         }
         return gsl_spline_eval(splinemu,x,accelm);
     }
-    void splineInit(const int sizes, const int sizem, const double mx[], const double my[], const double sx[], const double sy[])
+    void splineInit(const int sizes, const int sizem, const double mx[], const double my[], const double sx[], const double sy[], bool analytic_p)
     {
+        analytic=analytic_p;
         if(accels!=NULL)
             gsl_interp_accel_free(accels);
         if(accelm!=NULL)

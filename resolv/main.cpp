@@ -23,6 +23,7 @@ double *xm;
 constexpr int start=2;
 constexpr int step=1;
 Differential::Type inttype=Differential::Type::ClenshawCurtis;
+bool analytic=false;
 
 int main(int argc, char**argv)
 {
@@ -31,9 +32,9 @@ int main(int argc, char**argv)
 
     switch (argc-1){
     default:
-        fprintf(stderr,"Ignoring arguments beyond the third (%d supplied)\n",argc);
+        fprintf(stderr,"Ignoring arguments beyond the fouth (%d supplied)\n",argc);
         [[fallthrough]];
-    case 3:
+    case 4:
         switch(atoi(argv[3])){
         case 0:
             inttype=Differential::Type::Gauss;
@@ -45,13 +46,17 @@ int main(int argc, char**argv)
             fprintf(stderr,"Invalid integration type specified, using default 'Clenshaw-Curtis (1)'");
         }
         [[fallthrough]];
-    case 2:
+    case 3:
         maxsize=atoi(argv[2]);
         if(maxsize==0)
             fprintf(stderr,"You selected 0 as maximum size, no matrix radius will be computed\n");
         [[fallthrough]];
-    case 1:
+    case 2:
         mustep=atoi(argv[1]);
+        [[fallthrough]];
+    case 1:
+        if(atoi(argv[1]))
+            analytic=true;
         [[fallthrough]];
     case 0:
         ;
@@ -74,7 +79,7 @@ int main(int argc, char**argv)
             mu[i]=mu0[int(xm[i])];
         }
     }
-    interpolation::splineInit(sizes, sizemu, xm, mu, xs, s);
+    interpolation::splineInit(sizes, sizemu, xm, mu, xs, s, analytic);
     
     for(int i=start; i<=maxsize;i+=step){
         // size,start,end
