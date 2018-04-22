@@ -27,12 +27,14 @@ bool analytic=false;
 
 int main(int argc, char**argv)
 {
+    fprintf(stderr,"usage: analytic(1) ni mustep maxsize\n");
+    double xs[sizes];
     for(int i=0;i<sizes;i++)
         xs[i]=5*i;
 
     switch (argc-1){
     default:
-        fprintf(stderr,"Ignoring arguments beyond the fouth (%d supplied)\n",argc);
+        fprintf(stderr,"Ignoring arguments beyond the fourth (%d supplied)\n",argc);
         [[fallthrough]];
     case 4:
         switch(atoi(argv[3])){
@@ -80,6 +82,11 @@ int main(int argc, char**argv)
         }
     }
     interpolation::splineInit(sizes, sizemu, xm, mu, xs, s, analytic);
+
+    for (double i=0; i < 99; i+=.01) {
+        printf("%e %e %e\n", i, interpolation::mu(i), interpolation::S0(i));
+    }
+    return 0;
     
     for(int i=start; i<=maxsize;i+=step){
         // size,start,end
