@@ -67,9 +67,5 @@ namespace interpolation
             gsl_interp_accel_free(accels);
         if(accelm!=NULL)
             gsl_interp_accel_free(accelm);
-        for (size_t i = 0; i < splineS0->size ; ++i) {
-            printf("ss %e %e\n", splineS0->x[i], splineS0->y[i]);
-        }
-
     }
 }
