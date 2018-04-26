@@ -8,9 +8,13 @@
 #include "differential.h"
 
 #include <cstdlib>
+#include <vector>
 
-// #include <gsl/gsl_blas.h>
 #undef STDEIG
+
+#ifdef STDEIG
+#include <gsl/gsl_blas.h>
+#endif
 
 #define HAVE_INLINE
 #define GSL_RANGE_CHECK_OFF
@@ -30,22 +34,25 @@ namespace eigen {
         if(F!=NULL)
             gsl_matrix_free(F);
     }
-    void init(const unsigned int size, double start, double end, Differential::Type type)
+    void init(const size_t size, const double start, const double end, const Differential::Type type, const double points[], const size_t npts)
     {
         Differential d(size, type);
+        size_t size_m=(npts-1)*size;
         freemem();
         // allocation
-        A=gsl_matrix_alloc(size,size);
-        F=gsl_matrix_alloc(size,size);
-        for(int i=0;i<size; i++){
-            auto curnode=d.nodes(i,start,end);
-            auto dasi=S0(curnode);
-            for(int j=0; j<size; j++){
-                gsl_matrix_set(A,i,j,d.differentiationWeights(j,i,start,end));
-                gsl_matrix_set(F,i,j,dasi*interpolation::beta(curnode,d.nodes(j,start,end))*d.quadratureWeights(j,start,end));
+        A=gsl_matrix_alloc(size_m,size_m);
+        F=gsl_matrix_alloc(size_m,size_m);
+        for (size_t k=1; k < npts; ++k)
+            for(size_t i=0; i < size; i++){
+                auto curnode=d.nodes(i,points[k-1],points[k]);
+                auto dasi=S0(curnode);
+                for (size_t l=1; l < npts; ++l)
+                    for(size_t j=0; j<size; j++)
+                        gsl_matrix_set(F,size*(k-1)+i,size*(l-1)+j,dasi*interpolation::beta(curnode,d.nodes(j,points[l-1],points[l]))*d.quadratureWeights(j,points[l-1],points[l]));
+                for(size_t j=0; j<size; j++)
+                    gsl_matrix_set(A,size*(k-1)+i,size*(k-1)+j,d.differentiationWeights(j,i,points[k-1],points[k]));
+                (*gsl_matrix_ptr(A,size*(k-1)+i,size*(k-1)+i))+=interpolation::gamma(curnode)+interpolation::mu(curnode);
             }
-            (*gsl_matrix_ptr(A,i,i))+=gamma(curnode)+mu(curnode);
-        }
         // for(int i=0;i<size;i++){
         //     for (int j=0; j<size; ++j)
         //         printf("%.10e ", gsl_matrix_get(A,i,j));

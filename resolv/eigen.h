@@ -8,7 +8,7 @@
 namespace eigen
 {
     double computeSpectralRadius();
-    void init(const unsigned int size, double start, double end, Differential::Type type);
+    void init(const size_t size, const double start, const double end, const Differential::Type type, const double points[], const size_t npts);
     void freemem();
 }
 
