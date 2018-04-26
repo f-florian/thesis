@@ -68,7 +68,7 @@ int main(int argc, char**argv)
     for(int i=start; i<=maxsize;i+=step){
         // size,start,end
         if (analytic)
-            eigen::init(i, inttype, {0,100});
+            eigen::init<2>(i, inttype, {0,100});
         else
             eigen::init(i, inttype, xs, sizes);
         auto a=eigen::computeSpectralRadius();
