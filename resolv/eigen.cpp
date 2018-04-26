@@ -44,7 +44,7 @@ namespace eigen {
         F=gsl_matrix_alloc(size_m,size_m);
         for (size_t k=1; k < npts; ++k)
             for(size_t i=0; i < size; i++){
-                auto curnode=d.nodes(i,points[k-1],points[k]);
+                auto nodei=d.nodes(i,points[k-1],points[k]);
                 auto dasi=S0(curnode);
                 for (size_t l=1; l < npts; ++l)
                     for(size_t j=0; j<size; j++)
@@ -53,11 +53,11 @@ namespace eigen {
                     gsl_matrix_set(A,size*(k-1)+i,size*(k-1)+j,d.differentiationWeights(j,i,points[k-1],points[k]));
                 (*gsl_matrix_ptr(A,size*(k-1)+i,size*(k-1)+i))+=interpolation::gamma(curnode)+interpolation::mu(curnode);
             }
-        // for(int i=0;i<size;i++){
-        //     for (int j=0; j<size; ++j)
-        //         printf("%.10e ", gsl_matrix_get(A,i,j));
-        //     printf(";\n");
-        // }
+        for(int i=0;i<size;i++){
+            for (int j=0; j<size; ++j)
+                printf("%.10e ", gsl_matrix_get(A,i,j));
+            printf(";\n");
+        }
     }
     double computeSpectralRadius()
     {
