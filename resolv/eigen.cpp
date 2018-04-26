@@ -45,19 +45,19 @@ namespace eigen {
         for (size_t k=1; k < npts; ++k)
             for(size_t i=0; i < size; i++){
                 auto nodei=d.nodes(i,points[k-1],points[k]);
-                auto dasi=S0(curnode);
+                auto dasi=S0(nodei);
                 for (size_t l=1; l < npts; ++l)
                     for(size_t j=0; j<size; j++)
-                        gsl_matrix_set(F,size*(k-1)+i,size*(l-1)+j,dasi*interpolation::beta(curnode,d.nodes(j,points[l-1],points[l]))*d.quadratureWeights(j,points[l-1],points[l]));
+                        gsl_matrix_set(F,size*(k-1)+i,size*(l-1)+j,dasi*interpolation::beta(nodei,d.nodes(j,points[l-1],points[l]))*d.quadratureWeights(j,points[l-1],points[l]));
                 for(size_t j=0; j<size; j++)
                     gsl_matrix_set(A,size*(k-1)+i,size*(k-1)+j,d.differentiationWeights(j,i,points[k-1],points[k]));
-                (*gsl_matrix_ptr(A,size*(k-1)+i,size*(k-1)+i))+=interpolation::gamma(curnode)+interpolation::mu(curnode);
+                (*gsl_matrix_ptr(A,size*(k-1)+i,size*(k-1)+i))+=interpolation::gamma(nodei)+interpolation::mu(nodei);
             }
-        for(int i=0;i<size;i++){
-            for (int j=0; j<size; ++j)
-                printf("%.10e ", gsl_matrix_get(A,i,j));
-            printf(";\n");
-        }
+        // for(int i=0;i<size;i++){
+        //     for (int j=0; j<size; ++j)
+        //         printf("%.10e ", gsl_matrix_get(A,i,j));
+        //     printf(";\n");
+        // }
     }
     double computeSpectralRadius()
     {

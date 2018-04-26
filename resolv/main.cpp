@@ -67,7 +67,7 @@ int main(int argc, char**argv)
 
     for(int i=start; i<=maxsize;i+=step){
         // size,start,end
-        if (!analytic)
+        if (analytic)
             eigen::init<2>(i, inttype, {0,100});
         else
             eigen::init(i, inttype, xs, sizes);
