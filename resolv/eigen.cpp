@@ -34,7 +34,7 @@ namespace eigen {
         if(F!=NULL)
             gsl_matrix_free(F);
     }
-    void init(const size_t size, const double start, const double end, const Differential::Type type, const double points[], const size_t npts)
+    void init(const size_t size, const Differential::Type type, const double points[], const size_t npts)
     {
         Differential d(size, type);
         size_t size_m=(npts-1)*size;
