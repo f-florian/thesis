@@ -54,11 +54,13 @@ int main(int argc, char**argv)
         [[fallthrough]];
     case 5:
         maxsize=atoi(argv[5]);
-        if(maxsize==0)
-            fprintf(stderr,"You selected 0 as maximum size, no matrix radius will be computed\n");
         [[fallthrough]];
     case 4:
         step=atoi(argv[4]);
+        if(step==0) {
+            step=1;
+            fprintf(stderr,"Invlid step 0, setting 1\n");
+        }
         [[fallthrough]];
     case 3:
         start=atoi(argv[3]);
@@ -78,22 +80,33 @@ int main(int argc, char**argv)
         ;
     }
 
-    if(order!=0 && 
+    if(order && !analytic) {
+        start=((start-1)/20+1)*20;
+        step=((step-1)/20+1)*20;
+    }
     
     interpolation::splineInit(sizes, sizemu, xm, mu, xs, s, analytic);
 
+    double* mesh;
+    if (order)
+        mesh=(double*) malloc((maxsize+1)*sizeof(double));
+    else
+        mesh=NULL;
     for(int i=start; i<=maxsize;i+=step){
-        if (order>0) {
-            
-        }
-        // size,start,end
-        if (analytic)
+        if (order) {
+            for (int j = 0; j <= i; ++j)
+                mesh[j]=j*100./i;
+            eigen::init(order, inttype, mesh, i+1);
+        } else if (analytic) {
             eigen::init<2>(i, inttype, {0,100});
-        else
+        } else {
             eigen::init(i, inttype, xs, sizes);
+        }
+        
         auto a=eigen::computeSpectralRadius();
         printf("%4d %.20e\n", i, a);
     }
+    free(mesh);
     eigen::freemem();
     interpolation::free();
 }
