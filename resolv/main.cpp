@@ -23,9 +23,10 @@ size_t start=2;
 size_t order=0;
 bool analytic=false;
 
+double hint=0;
+
 int main(int argc, char**argv)
 {
-    fprintf(stderr,"usage: analytic(1) order start step maxsize type(g/cc)\n");
     double xs[sizes];
     for(int i=0;i<sizes;i++)
         xs[i]=5*i;
@@ -34,9 +35,13 @@ int main(int argc, char**argv)
         mu[i]=mu0[5*i];
     }
 
+    fprintf(stderr,"usage: analytic(1) order start step maxsize type(g/cc) hint\n");
     switch (argc-1){
     default:
         fprintf(stderr,"Ignoring arguments beyond the fourth (%d supplied)\n",argc);
+        [[fallthrough]];
+    case 7:
+        hint=atof(argv[7]);
         [[fallthrough]];
     case 6:
         switch(atoi(argv[6])){
@@ -103,7 +108,7 @@ int main(int argc, char**argv)
             eigen::init(i, inttype, xs, sizes);
         }
         
-        auto a=eigen::computeSpectralRadius();
+        auto a=eigen::computeSpectralRadius(hint);
         printf("%4d %.20e\n", i, a);
     }
     free(mesh);
