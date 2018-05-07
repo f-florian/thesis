@@ -50,10 +50,7 @@ namespace interpolation
     void splineInit(const int sizes, const int sizem, const double mx[], const double my[], const double sx[], const double sy[], bool analytic_p)
     {
         analytic=analytic_p;
-        if(accels!=NULL)
-            gsl_interp_accel_free(accels);
-        if(accelm!=NULL)
-            gsl_interp_accel_free(accelm);
+        free();
         accels=gsl_interp_accel_alloc();
         accelm=gsl_interp_accel_alloc();
         splinemu=gsl_spline_alloc(gsl_interp_cspline, sizem);
