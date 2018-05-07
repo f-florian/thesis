@@ -1,7 +1,7 @@
 
 # -*- mode: cmake; eval: (hl-line-mode 0);-*-
 
-set(sources "main.cpp eigen.cpp interpolation.cpp")
+set(sources "main.cpp eigen.cpp functions.cpp")
 set(linklibs "differential;gsl")
 
 set(properties " ") 

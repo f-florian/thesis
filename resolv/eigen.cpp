@@ -1,20 +1,19 @@
+#define HAVE_INLINE
+#define GSL_RANGE_CHECK_OFF
+
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_eigen.h>
 #include <gsl/gsl_complex_math.h>
 
 #include "eigen.h"
-#include "interpolation.h"
-#include "differential.h"
+#include "functions.h"
+#include <differential.h>
 
 #include <cstdlib>
 #include <vector>
 
-#define HAVE_INLINE
-#define GSL_RANGE_CHECK_OFF
 
-
-using namespace interpolation;
 using namespace std;
 
 namespace eigen {
@@ -34,12 +33,11 @@ namespace eigen {
         size_t size_m=(npts-1)*size;
         freemem();
         // allocation
-        A=gsl_matrix_alloc(size_m,size_m);
+        A=gsl_matrix_calloc(size_m,size_m);
         F=gsl_matrix_alloc(size_m,size_m);
         for (size_t k=1; k < npts; ++k)
             for(size_t i=0; i < size; i++){
                 auto nodei=d.nodes(i,points[k-1],points[k]);
-                auto dasi=S0(nodei);
                 for (size_t l=1; l < npts; ++l)
                     for(size_t j=0; j<size; j++)
                         gsl_matrix_set(F,size*(k-1)+i,size*(l-1)+j,dasi*interpolation::beta(nodei,d.nodes(j,points[l-1],points[l]))*d.quadratureWeights(j,points[l-1],points[l]));
@@ -53,7 +51,7 @@ namespace eigen {
         //     printf(";\n");
         // }
     }
-    double computeSpectralRadius(double hint)
+    double computeSpectralRadius(const double hint)
     {
         double a, r0=0;
         gsl_vector_complex * alpha=gsl_vector_complex_alloc(A->size1);
@@ -73,7 +71,6 @@ namespace eigen {
         gsl_vector_free(beta);
         gsl_vector_complex_free(alpha);
         gsl_eigen_gen_free(ws);
-        // return make_pair(r1,r2);
         return r0;
     }
 }

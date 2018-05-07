@@ -8,9 +8,9 @@
 
 namespace eigen
 {
-    double computeSpectralRadius(double hint);
+    double computeSpectralRadius(const double hint);
     void init(const size_t size, const Differential::Type type, const double points[], const size_t npts);
-    template<size_t n> void init(const size_t size, const Differential::Type type, const std::array<double,n> points) {return init(size,type,points.data(),n);}
+    template<size_t n> auto init(const size_t size, const Differential::Type type, const std::array<double,n> points) {return init(size,type,points.data(),n);}
     void freemem();
 }
 
