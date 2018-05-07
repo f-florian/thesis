@@ -55,7 +55,7 @@ namespace eigen {
     }
     double computeSpectralRadius(double hint)
     {
-        double errn, erro=hint, a, r0=0;
+        double a, r0=0;
         gsl_vector_complex * alpha=gsl_vector_complex_alloc(A->size1);
         // general eigenvalue problem
         gsl_eigen_gen_workspace *ws=gsl_eigen_gen_alloc(A->size1);
@@ -63,17 +63,12 @@ namespace eigen {
         gsl_eigen_gen(F,A,alpha,beta,ws);
         for(int i=0; i<A->size1; i++){
             a=gsl_complex_abs(gsl_vector_complex_get(alpha,i))/abs(gsl_vector_get(beta,i));
-            errn=abs(a-hint);
-            if(errn<erro){
-                erro=errn;
+            if (hint) {
+                if(abs(a-hint)<abs(r0-hint))
+                    r0=a;
+            } else if (r0<a) {
                 r0=a;
             }
-            // if(r1<a){
-            //     r2=r1;
-            //     r1=a;
-            // } else if (r2<a) {
-            //     r2=a;
-            // }
         }
         gsl_vector_free(beta);
         gsl_vector_complex_free(alpha);
