@@ -34,7 +34,7 @@ namespace eigen {
         size_t size_m=(npts-1)*size;
         freemem();
         // allocation
-        A=gsl_matrix_alloc(size_m,size_m);
+        A=gsl_matrix_calloc(size_m,size_m);
         F=gsl_matrix_alloc(size_m,size_m);
         for (size_t k=1; k < npts; ++k)
             for(size_t i=0; i < size; i++){
