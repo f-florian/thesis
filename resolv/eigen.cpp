@@ -60,12 +60,13 @@ namespace eigen {
             for(size_t j=0; j<M->size2; ++j)
                 gsl_matrix_set(M,i,j,gsl_matrix_get(tmp,i+1,j+1));
 
-        // TODO: inverse
         gsl_matrix *eqmatrix=gsl_matrix_alloc(2,2);
-        gsl_matrix_set(eqmatrix,0,0,c(0)-D(0)*gsl_matrix_get(H,0,0));
-        gsl_matrix_set(eqmatrix,0,1,-D(0)*gsl_matrix_get(H,0,size_m+1));
-        gsl_matrix_set(eqmatrix,1,0,-D(points[npts-1])*gsl_matrix_get(H,size_m+1,0));
-        gsl_matrix_set(eqmatrix,1,1,c(points[npts-1])-D(points[npts-1])*gsl_matrix_get(H,size_m+1,size_m+1));
+        gsl_matrix_set(eqmatrix,1,1,c(0)-D(0)*gsl_matrix_get(H,0,0));
+        gsl_matrix_set(eqmatrix,0,1,D(0)*gsl_matrix_get(H,0,size_m+1));
+        gsl_matrix_set(eqmatrix,1,0,D(points[npts-1])*gsl_matrix_get(H,size_m+1,0));
+        gsl_matrix_set(eqmatrix,0,0,c(points[npts-1])-D(points[npts-1])*gsl_matrix_get(H,size_m+1,size_m+1));
+        double scale=gsl_matrix_get(eqmatrix,0,0)*gsl_matrix_get(eqmatrix,1,1)-gsl_matrix_get(eqmatrix,1,0)*gsl_matrix_get(eqmatrix,0,1);
+        gsl_matrix_scale(eqmatrix, scale);
 
         gsl_matrix *nonhom=gsl_matrix_alloc(2,size_m);
         for (size_t i = 0; i < size_m; ++i) {
@@ -79,12 +80,12 @@ namespace eigen {
 
         for (size_t i=0; i < size_m; ++i) {
             gsl_matrix_set(vcol,i,0,gsl_matrix_get(tmp,i+1,0));
-            gsl_matrix_set(vrow,i,0,gsl_matrix_get(nonhom,0,i));
+            gsl_matrix_set(vrow,0,i,gsl_matrix_get(nonhom,0,i));
         }
         gsl_blas_dgemm(CblasNoTrans,  CblasNoTrans, 1, vcol, vrow, 1, M);
         for (size_t i=0; i < size_m; ++i) {
             gsl_matrix_set(vcol,i,0,gsl_matrix_get(tmp,i+1,size_m+1));
-            gsl_matrix_set(vrow,i,0,gsl_matrix_get(nonhom,1,i));
+            gsl_matrix_set(vrow,0,i,gsl_matrix_get(nonhom,1,i));
         }
         gsl_blas_dgemm(CblasNoTrans,  CblasNoTrans, 1, vcol, vrow, 1, M);
         
@@ -105,21 +106,22 @@ namespace eigen {
         //         printf("%.10e ", gsl_matrix_get(M,i,j));
         //     printf(";\n");
         // }
-        // gsl_matrix_free(H);
-        // gsl_matrix_free(tmp);
-        // gsl_matrix_free(vcol);
-        // gsl_matrix_free(vrow);
-        // gsl_matrix_free(nonhom);
-        // gsl_matrix_free(eqmatrix);
+        gsl_matrix_free(H);
+        gsl_matrix_free(tmp);
+        gsl_matrix_free(vcol);
+        gsl_matrix_free(vrow);
+        gsl_matrix_free(nonhom);
+        gsl_matrix_free(eqmatrix);
     }
     double computeSpectralRadius(const double hint)
     {
         double a, r0=0;
         gsl_vector_complex * alpha=gsl_vector_complex_alloc(M->size1);
         // general eigenvalue problem
-        gsl_eigen_gen_workspace *ws=gsl_eigen_gen_alloc(M->size1);
         gsl_vector * beta=gsl_vector_alloc(M->size1);
+        gsl_eigen_gen_workspace *ws=gsl_eigen_gen_alloc(M->size1);
         gsl_eigen_gen(B,M,alpha,beta,ws);
+        gsl_eigen_gen_free(ws);
         for(size_t i=0; i<M->size1; i++){
             a=gsl_complex_abs(gsl_vector_complex_get(alpha,i))/abs(gsl_vector_get(beta,i));
             if (hint) {
@@ -131,7 +133,6 @@ namespace eigen {
         }
         gsl_vector_free(beta);
         gsl_vector_complex_free(alpha);
-        // gsl_eigen_gen_free(ws);
         return r0;
     }
 }
