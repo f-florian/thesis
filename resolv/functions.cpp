@@ -24,11 +24,11 @@ namespace parameters{
     {
         return D0+D1*a;
     }
-    double beta(const double a)
+    double beta([[maybe_unused]] const double a)
     {
         return beta0;
     }
-    double mu(const double a);
+    double mu([[maybe_unused]] const double a)
     {
         return mu0;
     }

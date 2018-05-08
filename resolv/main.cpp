@@ -16,7 +16,7 @@ double D1=0;
 
 int main(int argc, char**argv)
 {
-    fprintf(stderr,"usage: order start step maxsize type(g/cc) length\n D_1 c_1");
+    fprintf(stderr,"usage: order start step maxsize type(g/cc) length D_1 c_1\n");
     switch (argc-1){
     default:
         fprintf(stderr,"Too many arguments (%d supplied); ignoring the last ones\n",argc);
@@ -80,17 +80,18 @@ int main(int argc, char**argv)
         mesh=NULL;
 
     //compute
-    for(int i=start; i<=maxsize;i+=step){
+    for(size_t i=start; i<=maxsize;i+=step){
+        fprintf(stderr, "%4ld\n", i);
         if (order) {
-            for (int j = 0; j <= i; ++j)
-                mesh[j]=j*100./i;
+            for (size_t j = 0; j <= i; ++j)
+                mesh[j]=static_cast<double>(j)*100./static_cast<double>(i);
             eigen::init(order+1, inttype, mesh, i+1);
         } else {
             eigen::init<2>(i, inttype, {0, length});
         }
         
         auto a=eigen::computeSpectralRadius(0);
-        printf("%4d %.20e\n", i, a);
+        printf("%4ld %.20e\n", i, a);
         fflush(stdout);
     }
     free(mesh);
