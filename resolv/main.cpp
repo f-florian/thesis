@@ -87,7 +87,7 @@ int main(int argc, char**argv)
     case 0:
         ;
     }
-    printf("\n");
+    fprintf(stderr, "\n");
         
     //init
     parameters::init(length, c0, D0, beta0, mu0, c1, D1, p);
