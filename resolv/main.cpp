@@ -93,7 +93,6 @@ int main(int argc, char**argv)
 
     // eigen::solveExplicit();
     // return 0;
-    parameters::init(length, c0, D0, beta0, mu0, c1, D1, p);
     
     //alloc mesh
     double* mesh;
@@ -103,23 +102,11 @@ int main(int argc, char**argv)
         mesh=NULL;
 
     //compute
-    for(size_t i=start; i<=maxsize;i+=step){
-        if (order) {
-            for (size_t j = 0; j <= i; ++j)
-                mesh[j]=static_cast<double>(j)*100./static_cast<double>(i);
-            eigen::init(order+1, inttype, mesh, i+1);
-        } else {
-            eigen::init<2>(i+1, inttype, {0, length});
-        }
+    for(double dbar=.001; dbar<100; dbar+=.1){
+        parameters::init(length, c0, dbar*D0, beta0, mu0, c1, dbar*D1, p);
+        eigen::init<2>(50, inttype, {0, length});
         auto a=eigen::computeSpectralRadius(0);
-        Differential d(i+1, Differential::Type::ClenshawCurtis);
-        // printf("%4ld %.20e\t", i, a.first);
-        for (size_t j=0; j < a.second->size ; ++j) {
-            // printf("%e %e\t",  gsl_vector_complex_get(a.second,j).dat[0], gsl_vector_complex_get(a.second,j).dat[1]);
-            printf("%e %e\t", d.nodes(j+1,0,1), gsl_vector_complex_get(a.second,j).dat[0]);
-        }
-        printf("\n");
-        fflush(stdout);
+        printf("%.20e %.20e\n", dbar, a.first);
     }
     free(mesh);
     eigen::freemem();
