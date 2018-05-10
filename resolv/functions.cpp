@@ -34,7 +34,12 @@ namespace parameters{
     }
     double beta([[maybe_unused]] const double a)
     {
+        // return beta0*a*(length_m-a);
         return beta0;
+    }
+    double betaonc(const double a)
+    {
+        return beta0*a/c0;
     }
     double mu([[maybe_unused]] const double a)
     {
