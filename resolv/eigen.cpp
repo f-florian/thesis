@@ -35,12 +35,12 @@ namespace eigen {
     }
     void init(const size_t size, const Differential::Type type, const double points[], const size_t npts)
     {
+        freemem();
         Differential d(size, type);
         size_t size_m=(npts-1)*size-2;
         gsl_matrix *H=gsl_matrix_calloc(size_m+2,size_m+2);
         gsl_matrix *tmp=gsl_matrix_alloc(size_m+2,size_m+2);
         gsl_matrix *tmp0=gsl_matrix_alloc(size_m+2,size_m+2);
-        freemem();
 
         if (D(0))
             size_m=(npts-1)*size-2;
@@ -59,7 +59,7 @@ namespace eigen {
 
         if (D(0)) {
             gsl_matrix_memcpy(tmp,H);
-            
+
             for (size_t k=1; k < npts; ++k)
                 for(size_t i=0; i < size; i++) {
                     auto nodei=d.nodes(i,points[k-1],points[k]);

@@ -102,9 +102,16 @@ int main(int argc, char**argv)
         mesh=NULL;
 
     //compute
-    for(double dbar=.001; dbar<100; dbar+=.1){
+    // for(size_t i=start; i<=maxsize;i+=step){
+    //     eigen::init<2>(i+1, inttype, {0, length});
+    //     auto a=eigen::computeSpectralRadius(0);
+    //     printf("%4ld %.20e\n", i, a.first);
+    // }
+
+    // r_0 vs \bar D
+    for(double dbar=0; dbar<1e-6; dbar+=1e-8){
         parameters::init(length, c0, dbar*D0, beta0, mu0, c1, dbar*D1, p);
-        eigen::init<2>(50, inttype, {0, length});
+        eigen::init<2>(400, inttype, {0, length});
         auto a=eigen::computeSpectralRadius(0);
         printf("%.20e %.20e\n", dbar, a.first);
     }
