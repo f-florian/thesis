@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0.0)
 project(int VERSION 1.0 LANGUAGES CXX)
 
 set(libs resolv)
-add_compile_options(-pipe -O2 -Wall -W -Wconversion -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -fshort-enums -fno-common --std=gnu++17)
+add_compile_options(-pipe -Wall -W -Wconversion -Wshadow -Wpointer-arith -Wcast-qual -Wcast-align -Wwrite-strings -fshort-enums -fno-common --std=gnu++17 -Og -ggdb)
 
 set(progname ${PROJECT_NAME})
 add_definitions(-Dcmake_MAJOR=${PROJECT_VERSION_MAJOR} -Dcmake_MINOR=${PROJECT_VERSION_MINOR} -Dcmake_NAME="${progname}" -D___debug="1")
