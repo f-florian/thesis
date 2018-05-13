@@ -104,16 +104,16 @@ namespace eigen {
                 for(size_t j=0; j<M->size2; ++j)
                     gsl_matrix_set(M,i,j,gsl_matrix_get(tmp0,i+1,j+1));
 
-            gsl_matrix_set(eqmatrix,1,1,c(points[npts-1])-D(points[npts-1])*gsl_matrix_get(H,0,0));
-            gsl_matrix_set(eqmatrix,0,1,D(points[npts-1])*gsl_matrix_get(H,0,size_m+1));
-            gsl_matrix_set(eqmatrix,1,0,D(0)*gsl_matrix_get(H,size_m+1,0));
-            gsl_matrix_set(eqmatrix,0,0,c(0)-D(0)*gsl_matrix_get(H,size_m+1,size_m+1));
+            gsl_matrix_set(eqmatrix,1,1,c(points[0])-D(points[0])*gsl_matrix_get(H,0,0));
+            gsl_matrix_set(eqmatrix,0,1,D(points[0])*gsl_matrix_get(H,0,size_m+1));
+            gsl_matrix_set(eqmatrix,1,0,D(points[npts-1])*gsl_matrix_get(H,size_m+1,0));
+            gsl_matrix_set(eqmatrix,0,0,c(points[npts-1])-D(points[npts-1])*gsl_matrix_get(H,size_m+1,size_m+1));
             double scale=gsl_matrix_get(eqmatrix,0,0)*gsl_matrix_get(eqmatrix,1,1)-gsl_matrix_get(eqmatrix,1,0)*gsl_matrix_get(eqmatrix,0,1);
             gsl_matrix_scale(eqmatrix, 1./scale);
 
             for (size_t i = 0; i < size_m; ++i) {
-                gsl_matrix_set(nonhom,0,i,D(points[npts-1])*gsl_matrix_get(H,0,i+1));
-                gsl_matrix_set(nonhom,1,i,D(0)*gsl_matrix_get(H,size_m+1,i+1));
+                gsl_matrix_set(nonhom,0,i,D(points[0])*gsl_matrix_get(H,0,i+1));
+                gsl_matrix_set(nonhom,1,i,D(points[npts-1])*gsl_matrix_get(H,size_m+1,i+1));
             }
             gsl_blas_dgemm(CblasNoTrans,  CblasNoTrans, 1, eqmatrix, nonhom, 0, nonhom0);
 

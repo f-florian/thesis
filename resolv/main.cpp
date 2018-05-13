@@ -125,7 +125,7 @@ int main(int argc, char**argv)
     // }
 
     // r_0 vs \bar D
-    for(double dbar=0; dbar<1e-6; dbar+=1e-8){
+    for(double dbar=0; dbar<1; dbar+=1e-3){
         parameters::init(length, c0, dbar*D0, beta0, mu0, c1, dbar*D1, p);
         eigen::init<2>(400, inttype, {0, length});
         auto a=eigen::computeSpectralRadius(0);
