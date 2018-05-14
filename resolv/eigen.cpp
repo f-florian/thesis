@@ -50,8 +50,8 @@ namespace eigen {
     }
     void init(const size_t size, const Differential::Type type, const double points[], const size_t npts)
     {
-        Differential d(size, type);
-        size_t size_m=(npts-1)*size-1;
+        Differential d(size+1, type);
+        size_t size_m=(npts-1)*size;
         freemem();
         // allocation
         A=gsl_matrix_calloc(size_m,size_m);
@@ -61,22 +61,25 @@ namespace eigen {
         //when fill 
         for (size_t k=1; k < npts; ++k)
             for(size_t i=0; i < size; i++){
-                if(k==1 && i==0)
-                    ++i;
-                auto nodei=d.nodes(i,points[k-1],points[k]);
+                auto nodei=d.nodes(i+1,points[k-1],points[k]);
                 auto dasi=S0(nodei);
                 for (size_t l=1; l < npts; ++l)
-                    for(size_t j=0; j<size; j++){
-                        if(l==1 && j==0)
-                            ++j;
-                        gsl_matrix_set(F,size*(k-1)+i-1,size*(l-1)+j-1,dasi*interpolation::beta(nodei,d.nodes(j,points[l-1],points[l]))*d.quadratureWeights(j,points[l-1],points[l]));
+                    for(size_t j=0; j<=size; j++){
+                        if(j==0) {
+                            if(k==1)
+                                continue;
+                            else
+                                gsl_matrix_set(F,size*(k-1)+i,size*(l-1)-1,dasi*interpolation::beta(nodei,d.nodes(0,points[l-1],points[l]))*d.quadratureWeights(0,points[l-1],points[l]));
+                        } else {
+                            gsl_matrix_set(F,size*(k-1)+i,size*(l-1)+j-1,dasi*interpolation::beta(nodei,d.nodes(j,points[l-1],points[l]))*d.quadratureWeights(j,points[l-1],points[l]));
+                        }
                     }
-                for(size_t j=0; j<size; j++){
+                for(size_t j=0; j<=size; j++){
                     if(k==1 && j==0)
                         ++j;
-                    gsl_matrix_set(A,size*(k-1)+i-1,size*(k-1)+j-1,d.differentiationWeights(j,i,points[k-1],points[k]));
+                    gsl_matrix_set(A,size*(k-1)+i,size*(k-1)+j-1,d.differentiationWeights(j,i+1,points[k-1],points[k]));
                 }
-                (*gsl_matrix_ptr(A,size*(k-1)+i-1,size*(k-1)+i-1))+=interpolation::gamma(nodei)+interpolation::mu(nodei);
+                (*gsl_matrix_ptr(A,size*(k-1)+i,size*(k-1)+i))+=interpolation::gamma(nodei)+interpolation::mu(nodei);
             }
         // for(int i=0;i<size;i++){
         //     for (int j=0; j<size; ++j)
