@@ -36,6 +36,8 @@ using namespace std;
 namespace eigen {
     namespace {
         gsl_matrix *A,*F;
+        double * pi;
+        size_t sizepi;
     }
     void freemem()
     {
@@ -43,6 +45,8 @@ namespace eigen {
             gsl_matrix_free(A);
         if(F!=NULL)
             gsl_matrix_free(F);
+        if(pi!=NULL)
+            free(pi);
     }
     void init(const size_t size, const Differential::Type type, const double points[], const size_t npts)
     {
@@ -52,6 +56,9 @@ namespace eigen {
         // allocation
         A=gsl_matrix_calloc(size_m,size_m);
         F=gsl_matrix_alloc(size_m,size_m);
+        pi=(double *)malloc(size_m*sizeof(double));
+        //fill pi
+        //when fill 
         for (size_t k=1; k < npts; ++k)
             for(size_t i=0; i < size; i++){
                 auto nodei=d.nodes(i,points[k-1],points[k]);
