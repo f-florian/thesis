@@ -97,7 +97,7 @@ namespace eigen {
                     gsl_matrix_set(A,size*(k-1)+i,size*(k-1)+j-1,d.differentiationWeights(j,i,points[k-1],points[k]));
                     // gsl_matrix_set(A,size*(k-1)+i-1,size*(k-1)+j-1,pi[size*(l-1)+i-1]*d.differentiationWeights(j,i,points[k-1],points[k]));
                 }
-                (*gsl_matrix_ptr(A,size*(k-1)+i,size*(k-1)+i-1))+=interpolation::gamma(nodei)+interpolation::mu(nodei);
+                (*gsl_matrix_ptr(A,size*(k-1)+i,size*(k-1)+i))+=interpolation::gamma(nodei)+interpolation::mu(nodei);
                 // (*gsl_matrix_ptr(A,size*(k-1)+i-1,size*(k-1)+i-1))+=interpolation::gamma(nodei)*pi[size*(l-1)+i-1];
             }
         // for(int i=0;i<size;i++){
