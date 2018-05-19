@@ -25,10 +25,10 @@
 
 #include <cstdlib>
 #include <vector>
+#include <cmath>
 
 #define HAVE_INLINE
 // #define GSL_RANGE_CHECK_OFF
-
 
 using namespace interpolation;
 using namespace std;
@@ -63,21 +63,36 @@ namespace eigen {
                             if(l==0)
                                 continue;
                             else
-                                (*gsl_matrix_ptr(F,size*k+i,size*l-1))+=dasi*interpolation::beta(nodei,d.nodes(0,points[l],points[l+1]))*d.quadratureWeights(0,points[l],points[l+1]));
+                                (*gsl_matrix_ptr(F,size*k+i,size*l-1))+=dasi*interpolation::beta(nodei,d.nodes(0,points[l],points[l+1]))*d.quadratureWeights(0,points[l],points[l+1]);
                         } else {
                             gsl_matrix_set(F,size*k+i,size*l+j-1,dasi*interpolation::beta(nodei,d.nodes(j,points[l],points[l+1]))*d.quadratureWeights(j,points[l],points[l+1]));
                         }
                     }
                 for(size_t j=0; j<=size; j++){
-                    if(k==1 && j==0)
+                    if(k==0 && j==0)
                         ++j;
-                    gsl_matrix_set(A,size*k+i,size*k+j-1,d.differentiationWeights(j,i,points[k],points[k+1]));
+                    gsl_matrix_set(A,size*k+i,size*k+j-1,d.differentiationWeights(j,i+1,points[k],points[k+1]));
                 }
                 (*gsl_matrix_ptr(A,size*k+i,size*k+i))+=interpolation::gamma(nodei)+interpolation::mu(nodei);
             }
-        // for(int i=0;i<size;i++){
-        //     for (int j=0; j<size; ++j)
+
+        // double acc[1000];
+        // for (size_t i = 0; i < size; ++i) {
+        //     acc[i]=4*pow(d.nodes(i+1,points[0],points[1]),3);
+        //     for (size_t j = 0; j < size; ++j) {
+        //         // printf("%.10e ", d.differentiationWeights(j+1,i+1,points[0],points[1]));
+        //         acc[i]-=pow(d.nodes(j+1,points[0],points[1]),4)*gsl_matrix_get(A,i,j);
+        //     }
+        //     // printf(";\n");        
+        // }
+        // printf("\n\n\n");
+        // for (size_t i = 0; i < size; ++i)
+        //     fprintf(stderr, "%.5e\t", acc[i]);
+
+        // for (size_t i = 0; i < size; ++i) {
+        //     for (size_t j = 0; j < size; ++j) {
         //         printf("%.10e ", gsl_matrix_get(A,i,j));
+        //     }
         //     printf(";\n");
         // }
     }
