@@ -18,7 +18,7 @@
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_eigen.h>
 #include <gsl/gsl_complex_math.h>
-
+#include <gsl/gsl_blas.h>
 #include "eigen.h"
 #include "interpolation.h"
 #include "differential.h"
@@ -75,6 +75,18 @@ namespace eigen {
                 }
                 (*gsl_matrix_ptr(A,size*k+i,size*k+i))+=interpolation::gamma(nodei)+interpolation::mu(nodei);
             }
+        auto col=gsl_matrix_alloc(size_m,1);
+        for (size_t i = 0; i < size_m; ++i) {
+            // gsl_matrix_set(A,size*k+i,size*k+j-1,d.differentiationWeights(j,i+1,points[k],points[k+1]));
+            gsl_matrix_set(col,i,0,d.differentiationWeights(0,i+1,points[0],points[1]));
+        }
+        auto row=gsl_matrix_alloc(1,size_m);
+        for (size_t i = 0; i < size_m; ++i) {
+            // gsl_matrix_set(A,size*k+i,size*k+j-1,d.differentiationWeights(j,i+1,points[k],points[k+1]));
+            gsl_matrix_set(row,0,i,d.evalPolynomial(i+1,0,points[0],points[1])/d.evalPolynomial(1,0,points[0],points[1]));
+        }
+
+        gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1,col,row,1,A);
 
         // double acc[1000];
         // for (size_t i = 0; i < size; ++i) {
