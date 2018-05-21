@@ -56,7 +56,7 @@ namespace eigen {
         A=gsl_matrix_calloc(size_m,size_m);
         F=gsl_matrix_alloc(size_m,size_m);
         pi=(double *)malloc(size_m*sizeof(double));
-        pi[0]=1e110;
+        pi[0]=exp(300);
         double nodeold=0,nodenew;
         for(size_t i = 1; i < size; ++i) {
             nodenew=d.nodes(i,points[0],points[1]);

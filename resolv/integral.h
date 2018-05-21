@@ -14,5 +14,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
-#include <gsl/gsl_integration.h>
+struct gsl_integration_rule;
+struct gsl_function;
 
+namespace integrator {
+    double qag (const gsl_function * f,
+                const double a, const double b,
+                const double epsabs, const double epsrel,
+                const size_t limit,
+                gsl_integration_workspace * workspace,
+                double *result, double *abserr,
+                gsl_integration_rule * q);
+}
