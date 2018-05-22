@@ -18,6 +18,7 @@
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_eigen.h>
 #include <gsl/gsl_complex_math.h>
+#include <gsl/gsl_integration.h>
 
 #include "eigen.h"
 #include "interpolation.h"
@@ -29,6 +30,8 @@
 #define HAVE_INLINE
 // #define GSL_RANGE_CHECK_OFF
 
+constexpr double epsabs=1e-10;
+constexpr double epsrel=1e-11;
 
 using namespace interpolation;
 using namespace std;
@@ -56,33 +59,30 @@ namespace eigen {
         A=gsl_matrix_calloc(size_m,size_m);
         F=gsl_matrix_alloc(size_m,size_m);
         pi=(double *)malloc(size_m*sizeof(double));
-        pi[0]=exp(300);
-        double nodeold=0,nodenew;
-        for(size_t i = 1; i < size; ++i) {
-            nodenew=d.nodes(i,points[0],points[1]);
-            //compute integral (nodeold,nodenew)
-            nodeold=nodenew;
+        pi[0]=1;
+        auto ws=gsl_integration_cquad_workspace_alloc(100);
+        gsl_function fpi;
+        fpi.params=nullptr;
+        fpi.function=[](double x, [[maybe_unused]] void* params){return interpolation::mu(x);};
+        double result;
+        for (int i = 1; i < size_m; ++i) {
+            gsl_integration_cquad(&fpi,d.nodes(i-1,points[0],points[1]),d.nodes(i,points[0],points[1]),epsabs,epsrel,ws,&result,NULL,NULL);
+            pi[i]=pi[i-1]/exp(result)/exp(52*(d.nodes(i,points[0],points[1])-d.nodes(i-1,points[0],points[1])));
         }
-        // check meaningful idx: 0/1?
-        if(maxidx>5)
-            maxidx-=5;
-        else
-            maxidx=0;
-        for (size_t i=0; i<= maxidx; ++i)
-            pi[i]/=pi[maxidx];
+        gsl_integration_cquad_workspace_free(ws);
 
         for(size_t i=0; i < size; i++){
             auto nodei=d.nodes(i+1,points[0],points[1]);
             auto dasi=S0(nodei);
-            for(size_t j=0; j<=size; j++){
+            for(size_t j=0; j<size; j++){
                 gsl_matrix_set(F,i,j,dasi*interpolation::beta(nodei,d.nodes(j,points[0],points[1]))*d.quadratureWeights(j,points[0],points[i])*pi[j]);
             }
-            for(size_t j=0; j<=size; j++){
-                gsl_matrix_set(A,i,j-1,d.differentiationWeights(j,i,points[0],points[1]));
+            for(size_t j=0; j<size; j++){
+                gsl_matrix_set(A,i,j,d.differentiationWeights(j,i,points[0],points[1]));
                 // gsl_matrix_set(A,size*(k-1)+i-1,size*(k-1)+j-1,pi[size*(l-1)+i-1]*d.differentiationWeights(j,i,points[k-1],points[k]));
             }
             (*gsl_matrix_ptr(A,i,i))+=interpolation::gamma(nodei);
-            for(size_t j=0; j<=size; j++)
+            for(size_t j=0; j<size; j++)
                 (*gsl_matrix_ptr(A,i,j))*=pi[i];
             // (*gsl_matrix_ptr(A,size*(k-1)+i-1,size*(k-1)+i-1))+=interpolation::gamma(nodei)*pi[size*(l-1)+i-1];
         }
@@ -113,6 +113,6 @@ namespace eigen {
         gsl_vector_complex_free(alpha);
         gsl_eigen_gen_free(ws);
         // return make_pair(r1,r2);
-        return r0;
+        return r0/exp(52);
     }
 }
