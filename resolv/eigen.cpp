@@ -87,12 +87,12 @@ namespace eigen {
             
             gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1, H, tmp, 0, tmp0);
             
-            for (size_t k=1; k < npts; ++k)
+            for (size_t k=0; k < npts-1; ++k)
                 for(size_t i=0; i < size; i++) {
-                    auto nodei=d.nodes(i,points[k-1],points[k]);
-                    (*gsl_matrix_ptr(tmp0,size*(k-1)+i,size*(k-1)+i))+=parameters::beta(nodei)+parameters::mu(nodei);
-                    if((k!=1 || i!=0) && (k!=npts-1 || i!= size-1))
-                        gsl_matrix_set(B,size*(k-1)+i-1,size*(k-1)+i-1,2*parameters::beta(nodei));
+                    auto nodei=d.nodes(i,points[k],points[k+1]);
+                    (*gsl_matrix_ptr(tmp0,size*k+i,size*k+i))+=parameters::beta(nodei)+parameters::mu(nodei);
+                    if((k!=0 || i!=0) && (k!=npts-2 || i!= size-1))
+                        gsl_matrix_set(B,size*k+i-1,size*k+i-1,2*parameters::beta(nodei));
             }
             // allocation       
             gsl_matrix *eqmatrix=gsl_matrix_alloc(2,2);
