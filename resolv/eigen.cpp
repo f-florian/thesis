@@ -53,36 +53,34 @@ namespace eigen {
     {
         freemem();
         Differential d(size, type);
-        size_t size_m=(npts-1)*size-2;
-        gsl_matrix *H=gsl_matrix_calloc(size_m+2,size_m+2);
-        gsl_matrix *tmp=gsl_matrix_alloc(size_m+2,size_m+2);
-        gsl_matrix *tmp0=gsl_matrix_alloc(size_m+2,size_m+2);
+        size_t size_m=(npts-1)*size;
+        gsl_matrix *H=gsl_matrix_calloc(size_m,size_m);
+        gsl_matrix *tmp=gsl_matrix_alloc(size_m,size_m);
+        gsl_matrix *tmp0=gsl_matrix_alloc(size_m,size_m);
 
         if (D(0))
             size_m=(npts-1)*size-2;
-        else
-            size_m=(npts-1)*size-1;
 
         // allocation
-        M=gsl_matrix_alloc(size_m,size_m);
+        M=gsl_matrix_calloc(size_m,size_m);
         B=gsl_matrix_calloc(size_m,size_m);
 
         // construct differentiotion matrix
-        for (size_t k=1; k < npts; ++k)
+        for (size_t k=0; k < npts-1; ++k)
             for(size_t i=0; i < size; i++)
                 for(size_t j=0; j<size; j++)
-                    gsl_matrix_set(H,size*(k-1)+i,size*(k-1)+j,d.differentiationWeights(j,i,points[k-1],points[k]));
+                    gsl_matrix_set(H,size*k+i,size*k+j,d.differentiationWeights(j,i,points[k],points[k+1]));
 
         if (D(0)) {
             gsl_matrix_memcpy(tmp,H);
 
-            for (size_t k=1; k < npts; ++k)
-                for(size_t i=0; i < size; i++) {
-                    auto nodei=d.nodes(i,points[k-1],points[k]);
+            for (size_t k = 0; k < npts-1; ++k)
+                for(size_t i = 0; i < size; i++) {
+                    auto nodei=d.nodes(i,points[k],points[k+1]);
                     auto scale=-parameters::D(nodei);
                     for(size_t j=0; j<size; j++)
-                        (*gsl_matrix_ptr(tmp,size*(k-1)+i,size*(k-1)+j))*=scale;
-                    (*gsl_matrix_ptr(tmp,size*(k-1)+i,size*(k-1)+i))+=parameters::c(nodei);
+                        (*gsl_matrix_ptr(tmp,size*k+j,size*k+i))*=scale;
+                    (*gsl_matrix_ptr(tmp,size*k+i,size*k+i))+=parameters::c(nodei);
                 }
             
             gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1, H, tmp, 0, tmp0);
@@ -134,13 +132,17 @@ namespace eigen {
             gsl_matrix_free(eqmatrix);
         } else { //D=0
             //copy; TODO: memcpy rows segments
-            for(size_t i=0; i<M->size1; ++i) {
-                auto nodei=d.nodes(i+1,points[0],points[1]);
-                for(size_t j=0; j<M->size2; ++j)
-                    gsl_matrix_set(M,j,i,gsl_matrix_get(H,j+1,i+1)*c(nodei));
+            // TODO: this is spectral only
+            for(size_t i = 0; i < M->size1; ++i) {
+                auto nodei=d.nodes(i,points[0],points[1]);
+                for(size_t j=1; j<M->size2; ++j)
+                    gsl_matrix_set(M,j,i,gsl_matrix_get(H,j,i)*c(nodei));
+                if(i==0)
+                    continue;
                 gsl_matrix_set(B,i,i,2*beta(nodei));
                 *(gsl_matrix_ptr(M,i,i))+=beta(nodei)+mu(nodei);
             }
+            gsl_matrix_set(M,0,0,1);
 
             // for(int i=0;i<size_m;i++){
             //     for (int j=0; j<size_m; ++j)
