@@ -34,7 +34,6 @@
 #include <limits>
 #include <vector>
 
-
 using namespace std;
 using namespace parameters;
 
@@ -75,10 +74,10 @@ namespace eigen {
             gsl_matrix_memcpy(tmp,H);
 
             for (size_t k = 0; k < npts-1; ++k)
-                for(size_t i = 0; i < size; i++) {
+                for(size_t i = 0; i < size; ++i) {
                     auto nodei=d.nodes(i,points[k],points[k+1]);
                     auto scale=-parameters::D(nodei);
-                    for(size_t j=0; j<size; j++)
+                    for(size_t j = 0; j < size; ++j)
                         (*gsl_matrix_ptr(tmp,size*k+j,size*k+i))*=scale;
                     (*gsl_matrix_ptr(tmp,size*k+i,size*k+i))+=parameters::c(nodei);
                 }
@@ -133,6 +132,9 @@ namespace eigen {
         } else { //D=0
             //copy; TODO: memcpy rows segments
             // TODO: this is spectral only
+
+            throw runtime_error("D=0 requires a different approach");
+            
             for(size_t i = 0; i < M->size1; ++i) {
                 auto nodei=d.nodes(i,points[0],points[1]);
                 for(size_t j=1; j<M->size2; ++j)
