@@ -47,46 +47,45 @@ namespace eigen {
     void init(const size_t size, const Differential::Type type, const double points[], const size_t npts)
     {
         Differential d(size+1, type);
-        size_t size_m=(npts-1)*size;
+        size_t size_m=(npts-1)*size+1;
         freemem();
         // allocation
         A=gsl_matrix_calloc(size_m,size_m);
-        F=gsl_matrix_alloc(size_m,size_m);
-
-        for (size_t k=0; k < npts-1; ++k)
-            for(size_t i=0; i < size; i++) {
-                auto nodei=d.nodes(i+1,points[k],points[k+1]);
+        F=gsl_matrix_calloc(size_m,size_m);
+        
+        for (size_t k = 0; k < npts-1; ++k)
+            for(size_t i = 1; i <= size; ++i) {
+                auto nodei=d.nodes(i,points[k],points[k+1]);
                 auto dasi=S0(nodei);
-                for (size_t l=0; l < npts-1; ++l)
-                    for(size_t j=0; j<=size; j++) {
-                        if(j==0) {
-                            if(l==0)
-                                continue;
-                            else
-                                (*gsl_matrix_ptr(F,size*k+i,size*l-1))+=dasi*interpolation::beta(nodei,d.nodes(0,points[l],points[l+1]))*d.quadratureWeights(0,points[l],points[l+1]);
-                        } else {
-                            gsl_matrix_set(F,size*k+i,size*l+j-1,dasi*interpolation::beta(nodei,d.nodes(j,points[l],points[l+1]))*d.quadratureWeights(j,points[l],points[l+1]));
-                        }
+                for (size_t l = 0; l < npts-1; ++l)
+                    for(size_t j = 0; j <= size; ++j) {
+                        if(j==0)
+                            (*gsl_matrix_ptr(F,size*k+i,size*l))+=dasi*interpolation::beta(nodei,d.nodes(0,points[l],points[l+1]))*d.quadratureWeights(0,points[l],points[l+1]);
+                        else
+                            gsl_matrix_set(F,size*k+i,size*l+j,dasi*interpolation::beta(nodei,d.nodes(j,points[l],points[l+1]))*d.quadratureWeights(j,points[l],points[l+1]));
                     }
-                for(size_t j=0; j<=size; j++){
+                for(size_t j = 0; j <= size; ++j) {
                     if(k==0 && j==0)
                         ++j;
-                    gsl_matrix_set(A,size*k+i,size*k+j-1,d.differentiationWeights(j,i+1,points[k],points[k+1]));
+                    gsl_matrix_set(A,size*k+i,size*k+j,d.differentiationWeights(j,i,points[k],points[k+1]));
                 }
                 (*gsl_matrix_ptr(A,size*k+i,size*k+i))+=interpolation::gamma(nodei)+interpolation::mu(nodei);
             }
-        auto col=gsl_matrix_alloc(size_m,1);
-        for (size_t i = 0; i < size_m; ++i) {
-            // gsl_matrix_set(A,size*k+i,size*k+j-1,d.differentiationWeights(j,i+1,points[k],points[k+1]));
-            gsl_matrix_set(col,i,0,d.differentiationWeights(0,i+1,points[0],points[1]));
-        }
-        auto row=gsl_matrix_alloc(1,size_m);
-        for (size_t i = 0; i < size_m; ++i) {
-            // gsl_matrix_set(A,size*k+i,size*k+j-1,d.differentiationWeights(j,i+1,points[k],points[k+1]));
-            gsl_matrix_set(row,0,i,d.evalPolynomial(i+1,0,points[0],points[1])/d.evalPolynomial(1,0,points[0],points[1]));
-        }
 
-        gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1,col,row,1,A);
+        gsl_matrix_set(A,0,0,1);
+            
+        // auto col=gsl_matrix_alloc(size_m,1);
+        // for (size_t i = 0; i < size_m; ++i) {
+        //     // gsl_matrix_set(A,size*k+i,size*k+j-1,d.differentiationWeights(j,i+1,points[k],points[k+1]));
+        //     gsl_matrix_set(col,i,0,d.differentiationWeights(0,i+1,points[0],points[1]));
+        // }
+        // auto row=gsl_matrix_alloc(1,size_m);
+        // for (size_t i = 0; i < size_m; ++i) {
+        //     // gsl_matrix_set(A,size*k+i,size*k+j-1,d.differentiationWeights(j,i+1,points[k],points[k+1]));
+        //     gsl_matrix_set(row,0,i,d.evalPolynomial(i+1,0,points[0],points[1])/d.evalPolynomial(1,0,points[0],points[1]));
+        // }
+
+        // gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1,col,row,1,A);
 
         // double acc[1000];
         // for (size_t i = 0; i < size; ++i) {
