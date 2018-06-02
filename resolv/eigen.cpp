@@ -9,7 +9,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
@@ -51,45 +51,59 @@ namespace eigen {
     void init(const size_t size, const Differential::Type type, const double points[], const size_t npts)
     {
         freemem();
-        Differential d(size, type);
-        size_t size_m=(npts-1)*size;
+        Differential d(size+1, type);
+        size_t size_m=(npts-1)*size+1;
         gsl_matrix *H=gsl_matrix_calloc(size_m,size_m);
         gsl_matrix *tmp=gsl_matrix_alloc(size_m,size_m);
         gsl_matrix *tmp0=gsl_matrix_alloc(size_m,size_m);
 
         if (D(0))
-            size_m=(npts-1)*size-2;
+            size_m=(npts-1)*size-1;
 
         // allocation
         M=gsl_matrix_calloc(size_m,size_m);
         B=gsl_matrix_calloc(size_m,size_m);
 
+        // TODO: chebyshev only
         // construct differentiotion matrix
-        for (size_t k=0; k < npts-1; ++k)
-            for(size_t i=0; i < size; i++)
-                for(size_t j=0; j<size; j++)
+        for (size_t j = 0; j <= size; ++j)
+            gsl_matrix_set(H,0,j,d.differentiationWeights(j,0,points[0],points[1]));
+        for (size_t k = 0; k < npts-1; ++k)
+            for (size_t i = 1; i <= size; ++i)
+                for (size_t j = 0; j <= size; ++j)
                     gsl_matrix_set(H,size*k+i,size*k+j,d.differentiationWeights(j,i,points[k],points[k+1]));
 
         if (D(0)) {
             gsl_matrix_memcpy(tmp,H);
 
-            for (size_t k = 0; k < npts-1; ++k)
-                for(size_t i = 0; i < size; ++i) {
+            auto scale=-parameters::D(0);
+            for(size_t j = 0; j < size; ++j)
+                (*gsl_matrix_ptr(tmp,j,0))*=scale;
+            (*gsl_matrix_ptr(tmp,0,0))+=parameters::c(0);
+            for (size_t k = 0; k < npts-1; ++k) {
+                for (size_t i = 1; i <= size; ++i) {
                     auto nodei=d.nodes(i,points[k],points[k+1]);
-                    auto scale=-parameters::D(nodei);
-                    for(size_t j = 0; j < size; ++j)
+                    scale=-parameters::D(nodei);
+                    size_t minrow=1, maxrow=size;
+                    if (i == size && k != npts-2)
+                        maxrow=2*size;
+                    if (k==0)
+                        minrow=0;
+                    for(size_t j = minrow; j <= maxrow; ++j)
                         (*gsl_matrix_ptr(tmp,size*k+j,size*k+i))*=scale;
                     (*gsl_matrix_ptr(tmp,size*k+i,size*k+i))+=parameters::c(nodei);
                 }
-            
+            }
             gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1, H, tmp, 0, tmp0);
             
+            (*gsl_matrix_ptr(tmp0,0,0))+=parameters::beta(0)+parameters::mu(0);
             for (size_t k=0; k < npts-1; ++k)
-                for(size_t i=0; i < size; i++) {
+                for(size_t i=1; i <= size; i++) {
                     auto nodei=d.nodes(i,points[k],points[k+1]);
                     (*gsl_matrix_ptr(tmp0,size*k+i,size*k+i))+=parameters::beta(nodei)+parameters::mu(nodei);
-                    if((k!=0 || i!=0) && (k!=npts-2 || i!= size-1))
-                        gsl_matrix_set(B,size*k+i-1,size*k+i-1,2*parameters::beta(nodei));
+                    if (i==size && k==npts-2 )
+                        break;
+                    gsl_matrix_set(B,size*k+i-1,size*k+i-1,2*parameters::beta(nodei));
             }
             // allocation       
             gsl_matrix *eqmatrix=gsl_matrix_alloc(2,2);
@@ -105,7 +119,7 @@ namespace eigen {
             gsl_matrix_set(eqmatrix,0,1,D(points[0])*gsl_matrix_get(H,0,size_m+1));
             gsl_matrix_set(eqmatrix,1,0,D(points[npts-1])*gsl_matrix_get(H,size_m+1,0));
             gsl_matrix_set(eqmatrix,0,0,c(points[npts-1])-D(points[npts-1])*gsl_matrix_get(H,size_m+1,size_m+1));
-            double scale=gsl_matrix_get(eqmatrix,0,0)*gsl_matrix_get(eqmatrix,1,1)-gsl_matrix_get(eqmatrix,1,0)*gsl_matrix_get(eqmatrix,0,1);
+            scale=gsl_matrix_get(eqmatrix,0,0)*gsl_matrix_get(eqmatrix,1,1)-gsl_matrix_get(eqmatrix,1,0)*gsl_matrix_get(eqmatrix,0,1);
             gsl_matrix_scale(eqmatrix, 1./scale);
 
             for (size_t i = 0; i < size_m; ++i) {
