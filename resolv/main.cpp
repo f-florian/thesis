@@ -120,7 +120,13 @@ int main(int argc, char**argv)
 
     parameters::init(length, c0, D0, beta0, mu0, c1, D1, p);
     for(size_t i=start; i<=maxsize;i+=step){
-        eigen::init<2>(i+1, inttype, {0, length});
+        if (order) {
+            for (size_t j = 0; j <= i; ++j)
+                mesh[j]=static_cast<double>(j)*length/i;
+            eigen::init(order+1, inttype, mesh, i+1);
+        } else {
+            eigen::init<2>(i+1, inttype, {0,length});
+        }
         auto a=eigen::computeSpectralRadius(0);
         printf("%4ld %.20e\n", i, a.first);
     }
