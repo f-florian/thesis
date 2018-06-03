@@ -77,7 +77,7 @@ namespace eigen {
             gsl_matrix_memcpy(tmp,H);
 
             auto scale=-parameters::D(0);
-            for(size_t j = 0; j < size; ++j)
+            for(size_t j = 0; j <= size; ++j)
                 (*gsl_matrix_ptr(tmp,j,0))*=scale;
             (*gsl_matrix_ptr(tmp,0,0))+=parameters::c(0);
             for (size_t k = 0; k < npts-1; ++k) {
