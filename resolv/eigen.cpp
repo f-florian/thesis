@@ -9,7 +9,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
@@ -57,13 +57,11 @@ namespace eigen {
             for(size_t i = 1; i <= size; ++i) {
                 auto nodei=d.nodes(i,points[k],points[k+1]);
                 auto dasi=S0(nodei);
-                for (size_t l = 0; l < npts-1; ++l)
-                    for(size_t j = 0; j <= size; ++j) {
-                        if(j==0)
-                            (*gsl_matrix_ptr(F,size*k+i,size*l))+=dasi*interpolation::beta(nodei,d.nodes(0,points[l],points[l+1]))*d.quadratureWeights(0,points[l],points[l+1]);
-                        else
-                            gsl_matrix_set(F,size*k+i,size*l+j,dasi*interpolation::beta(nodei,d.nodes(j,points[l],points[l+1]))*d.quadratureWeights(j,points[l],points[l+1]));
-                    }
+                for (size_t l = 0; l < npts-1; ++l) {
+                    (*gsl_matrix_ptr(F,size*k+i,size*l))+=dasi*interpolation::beta(nodei,d.nodes(0,points[l],points[l+1]))*d.quadratureWeights(0,points[l],points[l+1]);
+                    for(size_t j = 1; j <= size; ++j)
+                        gsl_matrix_set(F,size*k+i,size*l+j,dasi*interpolation::beta(nodei,d.nodes(j,points[l],points[l+1]))*d.quadratureWeights(j,points[l],points[l+1]));
+                }
                 for(size_t j = 0; j <= size; ++j) {
                     if(k==0 && j==0)
                         ++j;
