@@ -38,7 +38,7 @@ namespace interpolation
     double S0(const double x)
     {
         if (analytic)
-            return 5187+ x*(226.438-2.776583333333333-x*2.776583333333333);
+            return 5187 + x * (226.438 - x * 2.777);
         if(x>100){
             fprintf(stderr,"Requested s interpolation in %.2e, which is %.2e beyond the maximum value\n",x,x-100);
             return gsl_spline_eval(splineS0,100,accels);
