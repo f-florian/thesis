@@ -58,7 +58,7 @@ namespace eigen {
         gsl_matrix *tmp0=gsl_matrix_alloc(size_m,size_m);
 
         if (D(0))
-            size_m=(npts-1)*size-1;
+            size_m-=2;
 
         // allocation
         M=gsl_matrix_calloc(size_m,size_m);
@@ -78,22 +78,18 @@ namespace eigen {
 
             auto scale=-parameters::D(0);
             for(size_t j = 0; j <= size; ++j)
-                (*gsl_matrix_ptr(tmp,j,0))*=scale;
+                (*gsl_matrix_ptr(tmp,0,j))*=scale;
             (*gsl_matrix_ptr(tmp,0,0))+=parameters::c(0);
             for (size_t k = 0; k < npts-1; ++k) {
                 for (size_t i = 1; i <= size; ++i) {
                     auto nodei=d.nodes(i,points[k],points[k+1]);
                     scale=-parameters::D(nodei);
-                    size_t minrow=1, maxrow=size;
-                    if (i == size && k != npts-2)
-                        maxrow=2*size;
-                    if (k==0)
-                        minrow=0;
-                    for(size_t j = minrow; j <= maxrow; ++j)
-                        (*gsl_matrix_ptr(tmp,size*k+j,size*k+i))*=scale;
+                    for(size_t j = 0; j < tmp->size2; ++j)
+                        (*gsl_matrix_ptr(tmp,size*k+i,j))*=scale;
                     (*gsl_matrix_ptr(tmp,size*k+i,size*k+i))+=parameters::c(nodei);
                 }
             }
+
             gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1, H, tmp, 0, tmp0);
             
             (*gsl_matrix_ptr(tmp0,0,0))+=parameters::beta(0)+parameters::mu(0);
