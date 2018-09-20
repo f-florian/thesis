@@ -44,15 +44,14 @@ namespace eigen {
         if(F!=NULL)
             gsl_matrix_free(F);
     }
-    void init(const size_t size, const Differential::Type type, const double points[], const size_t npts)
+    void alloc(size_t orderp1, Differential::Type type)
     {
-        Differential d(size+1, type);
-        size_t size_m=(npts-1)*size+1;
-        freemem();
-        // allocation
-        A=gsl_matrix_calloc(size_m,size_m);
-        F=gsl_matrix_calloc(size_m,size_m);
-        
+        A=gsl_matrix_calloc(orderp1,orderp1);
+        F=gsl_matrix_calloc(orderp1,orderp1);
+        Differential d(orderp1, type);
+    }
+    void init(const Differential::Type type, const size_t npts)
+    {
         for (size_t k = 0; k < npts-1; ++k)
             for(size_t i = 1; i <= size; ++i) {
                 auto nodei=d.nodes(i,points[k],points[k+1]);
@@ -105,7 +104,7 @@ namespace eigen {
         //     printf(";\n");
         // }
     }
-    double computeSpectralRadius(double hint)
+    double computeSpectralRadius()
     {
         double a, r0=0;
         gsl_vector_complex * alpha=gsl_vector_complex_alloc(A->size1);
@@ -125,7 +124,6 @@ namespace eigen {
         gsl_vector_free(beta);
         gsl_vector_complex_free(alpha);
         gsl_eigen_gen_free(ws);
-        // return make_pair(r1,r2);
         return r0;
     }
 }
