@@ -14,15 +14,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ***************************************************************************/
 
-#include <gsl/gsl_integration.h>
+#ifndef MAIN_H
+#define MAIN_H
 
-class Integral
-{
-public:
-    Integral(const double start, const double end, const int minsize);
-    double get(const double start, const double end) const;
-private:
-    double *data;
-    double max;
-    size_t size;
-};
+double* mainf(size_t size, double* var1, double var2);
+
+#endif //MAIN_H

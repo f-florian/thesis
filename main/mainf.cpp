@@ -27,13 +27,14 @@ constexpr Differential::Type inttype=Differential::Type::ClenshawCurtis;
 
 constexpr size_t orderp1=100;
 
-double* mainf(size_t size, double* var1, double var2)
+double* mainf(size_t size, double* var1, double *var2)
 {
     double *out=static_cast<double*>(malloc(size*sizeof(double)));
-    eigen::alloc(orderp1, ittype);
+    eigen::alloc(orderp1, inttype);
     
     for(size_t i = 0; i < size; ++i) {
-        eigen::init();
+        splineReInit(*(var1+i), *(var2+i));
+        eigen::init(agemax);
         *(out+i)=eigen::computeSpectralRadius();
     }
     eigen::freemem();
