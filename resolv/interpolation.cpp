@@ -28,7 +28,7 @@ namespace interpolation
     double beta(const double x1, const double x2){
         return spreadFactor*(6e-7*(10000-(x1-x2)*(x1-x2))+0.001);
     }
-    double gamma(const double x){
+    double gamma([[maybe_unused]] const double x){
         return gamma0;
     }
     double S0(const double x)

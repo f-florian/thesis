@@ -33,11 +33,10 @@ double* mainf(size_t size, double* var1, double *var2)
     eigen::alloc(orderp1, inttype);
     
     for(size_t i = 0; i < size; ++i) {
-        splineReInit(*(var1+i), *(var2+i));
+        interpolation::splineReInit(*(var1+i), *(var2+i));
         eigen::init(agemax);
         *(out+i)=eigen::computeSpectralRadius();
     }
     eigen::freemem();
-    interpolation::free();
     return out;
 }

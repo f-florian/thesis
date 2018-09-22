@@ -50,42 +50,41 @@ namespace eigen {
         F=gsl_matrix_calloc(orderp1,orderp1);
         d=new Differential(orderp1, type);
     }
-    void init(const Differential::Type type, const double agemax)
+    void init(const double agemax)
     {
         auto size=A->size1;
         for(size_t i = 1; i < size; ++i) {
-            auto nodei=d.nodes(i,0,agemax);
+            auto nodei=d->nodes(i,0,agemax);
             auto dasi=S0(nodei);
-            for(size_t j = 1; j < size; ++j)
-                gsl_matrix_set(F,i,j,dasi*interpolation::beta(nodei,d.nodes(j,0,agemax))*d.quadratureWeights(j,0,agemax));
-            if((j==0)||(j==size-1))
-                continue;
-            gsl_matrix_set(A,i,j,d.differentiationWeights(j,i,0,agemax));
+            for(size_t j = 1; j < size; ++j) {
+                gsl_matrix_set(F,i,j,dasi*interpolation::beta(nodei,d->nodes(j,0,agemax))*d->quadratureWeights(j,0,agemax));
+                if((j==0)||(j==size-1))
+                    continue;
+                gsl_matrix_set(A,i,j,d->differentiationWeights(j,i,0,agemax));
             }
             (*gsl_matrix_ptr(A,i,i))+=interpolation::gamma(nodei)+interpolation::mu(nodei);
         }
-        
         gsl_matrix_set(A,0,0,1);
             
         // auto col=gsl_matrix_alloc(size_m,1);
         // for (size_t i = 0; i < size_m; ++i) {
-        //     // gsl_matrix_set(A,size*k+i,size*k+j-1,d.differentiationWeights(j,i+1,points[k],points[k+1]));
-        //     gsl_matrix_set(col,i,0,d.differentiationWeights(0,i+1,points[0],points[1]));
+        //     // gsl_matrix_set(A,size*k+i,size*k+j-1,d->differentiationWeights(j,i+1,points[k],points[k+1]));
+        //     gsl_matrix_set(col,i,0,d->differentiationWeights(0,i+1,points[0],points[1]));
         // }
         // auto row=gsl_matrix_alloc(1,size_m);
         // for (size_t i = 0; i < size_m; ++i) {
-        //     // gsl_matrix_set(A,size*k+i,size*k+j-1,d.differentiationWeights(j,i+1,points[k],points[k+1]));
-        //     gsl_matrix_set(row,0,i,d.evalPolynomial(i+1,0,points[0],points[1])/d.evalPolynomial(1,0,points[0],points[1]));
+        //     // gsl_matrix_set(A,size*k+i,size*k+j-1,d->differentiationWeights(j,i+1,points[k],points[k+1]));
+        //     gsl_matrix_set(row,0,i,d->evalPolynomial(i+1,0,points[0],points[1])/d->evalPolynomial(1,0,points[0],points[1]));
         // }
 
         // gsl_blas_dgemm(CblasNoTrans,CblasNoTrans,1,col,row,1,A);
 
         // double acc[1000];
         // for (size_t i = 0; i < size; ++i) {
-        //     acc[i]=4*pow(d.nodes(i+1,points[0],points[1]),3);
+        //     acc[i]=4*pow(d->nodes(i+1,points[0],points[1]),3);
         //     for (size_t j = 0; j < size; ++j) {
-        //         // printf("%.10e ", d.differentiationWeights(j+1,i+1,points[0],points[1]));
-        //         acc[i]-=pow(d.nodes(j+1,points[0],points[1]),4)*gsl_matrix_get(A,i,j);
+        //         // printf("%.10e ", d->differentiationWeights(j+1,i+1,points[0],points[1]));
+        //         acc[i]-=pow(d->nodes(j+1,points[0],points[1]),4)*gsl_matrix_get(A,i,j);
         //     }
         //     // printf(";\n");        
         // }
@@ -108,7 +107,7 @@ namespace eigen {
         gsl_eigen_gen_workspace *ws=gsl_eigen_gen_alloc(A->size1);
         gsl_vector * beta=gsl_vector_alloc(A->size1);
         gsl_eigen_gen(F,A,alpha,beta,ws);
-        for(int i=0; i<A->size1; i++){
+        for(size_t i=0; i<A->size1; i++){
             a=gsl_complex_abs(gsl_vector_complex_get(alpha,i))/abs(gsl_vector_get(beta,i));
             if (r0<a)
                 r0=a;

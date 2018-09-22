@@ -24,8 +24,9 @@
 namespace eigen
 {
     double computeSpectralRadius();
-    void init(const Differential::Type type, const double agemax);
+    void init(const double agemax);
     void freemem();
+    void alloc(size_t orderp1, Differential::Type type);
 }
 
 #endif // EIGEN_H
