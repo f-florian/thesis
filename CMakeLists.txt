@@ -8,7 +8,7 @@ set(definitions cmake_MAJOR=${PROJECT_VERSION_MAJOR} cmake_MINOR=${PROJECT_VERSI
 set(coptions -pipe -O2 -Werror)
 # set subdirectories to add
 # set(utilities subdirectory_1  ... subdirectory_n)
-set(utilities resolv main)
+set(utilities disresolv main)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # set complete compile flags depending on the compiler

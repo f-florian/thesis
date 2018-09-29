@@ -17,6 +17,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-double* mainf(size_t size, double* var1, double var2);
+namespace libdis {
+    double* mainf(size_t size, double* var1, double* var2);
+}
 
 #endif //MAIN_H

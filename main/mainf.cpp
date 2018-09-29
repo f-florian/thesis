@@ -21,22 +21,24 @@
 #include "eigen.h"
 #include "interpolation.h"
 #include "differential.h"
+#include "main.h"
 
 constexpr double agemax=1;
 constexpr Differential::Type inttype=Differential::Type::ClenshawCurtis;
 
 constexpr size_t orderp1=100;
 
-double* mainf(size_t size, double* var1, double *var2)
-{
-    double *out=static_cast<double*>(malloc(size*sizeof(double)));
-    eigen::alloc(orderp1, inttype);
+namespace libdis {
+    double* mainf(size_t size, double* var1, double *var2)
+    {
+        eigen::alloc(orderp1, inttype);
     
-    for(size_t i = 0; i < size; ++i) {
-        interpolation::splineReInit(*(var1+i), *(var2+i));
-        eigen::init(agemax);
-        *(out+i)=eigen::computeSpectralRadius();
+        for(size_t i = 0; i < size; ++i) {
+            interpolation::splineReInit(*(var1+i), *(var2+i));
+            eigen::init(agemax);
+            *(var1+i)=eigen::computeSpectralRadius();
+        }
+        eigen::freemem();
+        return var1;
     }
-    eigen::freemem();
-    return out;
 }
